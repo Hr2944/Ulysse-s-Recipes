@@ -1,0 +1,269 @@
+<script lang="ts">
+	import { slide } from 'svelte/transition';
+	import type { PageData } from './$types';
+	import { page } from '$app/state';
+	import Checkbox from '$lib/client/components/input/Checkbox.svelte';
+
+	// ✅ Access props with runes
+	const { data } = $props<{ data: PageData }>();
+	const { recipe } = data;
+
+	// --- State ---
+	let isIngredientsSheetOpen = $state(false);
+	let servings = $state(
+		parseInt(page.url.searchParams.get('pour') ?? '') || recipe.servings
+	);
+	const baseServings = recipe.servings;
+
+	let checkedSteps = $state(new Set<number>());
+	let userRating = $state(0);
+	let hoverRating = $state(0);
+
+	// --- Derived values ---
+	const dynamicIngredients = $derived(
+		recipe.ingredients.map((ing) => ({
+			...ing,
+			quantity: (ing.quantity / baseServings) * servings
+		}))
+	);
+
+	// Pre-sort steps and ingredients once (not in template)
+	const sortedSteps = $derived(
+		[...recipe.steps].sort((a, b) => a.step_number - b.step_number)
+	);
+	const sortedIngredients = $derived(
+		[...dynamicIngredients].sort((a, b) => (a.order || 99) - (b.order || 99))
+	);
+
+	// --- Effects ---
+	// Keep URL param synced when servings changes
+	// $effect(() => {
+	// 	const url = new URL(page.url);
+	// 	url.searchParams.set('pour', String(servings));
+	// 	goto(url, { replaceState: true, noScroll: true, keepFocus: true });
+	// });
+
+	// --- Utilities ---
+	function updateServings(newServings: number) {
+		if (newServings > 0) servings = newServings;
+	}
+
+	function formatQuantity(qty: number): string {
+		if (qty === null || qty === undefined) return '';
+		const roundedQty = Math.round(qty * 100) / 100;
+		if (roundedQty === 0.5) return '½';
+		if (roundedQty === 0.25) return '¼';
+		if (roundedQty === 0.75) return '¾';
+		return String(roundedQty);
+	}
+
+	function renderStepText(description: string) {
+		let renderedText = description;
+		for (const ingredient of dynamicIngredients) {
+			const regex = new RegExp(`\\b${ingredient.name}\\b`, 'gi');
+			const formattedQty = formatQuantity(ingredient.quantity);
+			const replacement = `<span class="font-bold text-primary">${ingredient.name} (${formattedQty} ${ingredient.unit || ''})</span>`;
+			renderedText = renderedText.replace(regex, replacement);
+		}
+		return renderedText;
+	}
+
+	function toggleStep(stepNumber: number) {
+		if (checkedSteps.has(stepNumber)) {
+			checkedSteps.delete(stepNumber);
+		} else {
+			checkedSteps.add(stepNumber);
+		}
+		// reassign to trigger reactivity
+		checkedSteps = new Set(checkedSteps);
+	}
+</script>
+
+<svelte:head>
+	<title>{recipe.title} - Ulysse's Recipes</title>
+</svelte:head>
+
+<div class="relative min-h-screen bg-surface">
+	<header class="max-h-[60vh] w-full bg-primary/10 overflow-hidden">
+		{#if recipe.cover_image_url}
+			<img src={recipe.cover_image_url} alt={recipe.title} class="h-full w-full object-cover" />
+		{/if}
+	</header>
+
+	<main class="relative z-10 -mt-16 rounded-t-3xl bg-surface p-6 pb-24">
+		<section class="text-center">
+			<h1 class="font-serif text-4xl font-bold text-primary md:text-5xl">{recipe.title}</h1>
+			<div class="mt-2 flex items-center justify-center gap-1 text-yellow-500">
+				<span>{recipe.average_rating.toFixed(1)}</span>
+				<svg class="h-8 w-8 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
+					<path
+						d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z" />
+				</svg>
+			</div>
+		</section>
+
+		<!-- Meta info cards -->
+		<section class="mt-8 grid grid-cols-2 gap-4 rounded-2xl bg-primary/5 p-4 text-center md:grid-cols-4">
+			<div class="flex flex-col items-center">
+				<svg class="w-8 h-8 fill-primary" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
+					<path
+						d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm0 200q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Z" />
+				</svg>
+				<span class="mt-1 font-bold capitalize text-primary">{recipe.difficulty}</span>
+			</div>
+			<div class="flex flex-col items-center">
+				<svg class="h-8 w-8 fill-primary" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
+					<path
+						d="M600-120q-118 0-210-67T260-360H120v-80h122q-2-11-2-20v-40q0-9 2-20H120v-80h140q38-106 130-173t210-67q69 0 130.5 24T840-748l-70 70q-35-29-78.5-45.5T600-740q-75 0-136.5 38.5T370-600h230v80H344q-2 11-3 20t-1 20q0 11 1 20t3 20h256v80H370q32 63 93.5 101.5T600-220q48 0 92.5-16.5T770-282l70 70q-48 44-109.5 68T600-120Z" />
+				</svg>
+				<span class="mt-1 font-bold capitalize text-primary">{recipe.cost}</span>
+			</div>
+			<div class="flex flex-col items-center">
+				<svg class="h-8 w-8 fill-primary" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
+					<path
+						d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z" />
+				</svg>
+				<span class="mt-1 font-bold text-primary">Préparation: {recipe.prep_time_minutes} min</span>
+			</div>
+			<div class="flex flex-col items-center">
+				<svg class="h-8 w-8 fill-primary" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
+					<path
+						d="M640-680q17 0 28.5-11.5T680-720q0-17-11.5-28.5T640-760q-17 0-28.5 11.5T600-720q0 17 11.5 28.5T640-680Zm-160 0q17 0 28.5-11.5T520-720q0-17-11.5-28.5T480-760q-17 0-28.5 11.5T440-720q0 17 11.5 28.5T480-680Zm-160 0q17 0 28.5-11.5T360-720q0-17-11.5-28.5T320-760q-17 0-28.5 11.5T280-720q0 17 11.5 28.5T320-680ZM200-560v360h560v-360H200Zm200 160h160v-80H400v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm280-440Zm0 0Z" />
+				</svg>
+				<span class="mt-1 font-bold text-primary">Cuisson: {recipe.cook_time_minutes} min</span>
+			</div>
+			{#if recipe.is_vegetarian}
+				<div class="flex flex-col items-center">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="h-8 w-8 fill-primary">
+						<path
+							d="M480-160q-56 0-105.5-17.5T284-227l-56 55q-11 11-28 11t-28-11q-11-11-11-28t11-28l55-55q-32-41-49.5-91T160-480q0-134 93-227t227-93h320v320q0 134-93 227t-227 93Zm0-80q100 0 170-70t70-170v-240H480q-100 0-170 70t-70 170q0 39 12 74.5t33 64.5l207-207q11-11 28-11t28 11q12 12 12 28.5T548-491L341-284q29 21 64.5 32.5T480-240Zm0-240Z" />
+					</svg>
+					<span class="mt-1 font-bold text-primary">Végétarien</span>
+				</div>
+			{/if}
+			{#if recipe.is_vegan}
+				<div class="flex flex-col items-center">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="h-8 w-8 fill-primary">
+						<path
+							d="M380-80q-75 0-127.5-52.5T200-260q0-35 17-64.5t63-75.5q6-6 11.5-12.5T306-430q-51-78-78.5-163.5T200-760q0-58 21-89t59-31q57 0 102 55t68 101q9 20 16.5 40.5T480-641q6-22 13.5-42.5T511-724q22-46 67-101t102-55q38 0 59 31t21 89q0 81-27.5 166.5T654-430q9 11 14.5 17.5T680-400q46 46 63 75.5t17 64.5q0 75-52.5 127.5T580-80q-45 0-72.5-10L480-100l-27.5 10Q425-80 380-80Zm0-80q23 0 46-5.5t43-16.5q-11-5-20-17t-9-21q0-8 11.5-14t28.5-6q17 0 28.5 6t11.5 14q0 9-9 21t-20 17q20 11 43 16.5t46 5.5q42 0 71-29t29-71q0-18-10-35t-30-34q-14-12-23-21t-29-34q-29-35-48-45.5T480-440q-41 0-60.5 10.5T372-384q-20 25-29 34t-23 21q-20 17-30 34t-10 35q0 42 29 71t71 29Zm40-130q-8 0-14-9t-6-21q0-12 6-21t14-9q8 0 14 9t6 21q0 12-6 21t-14 9Zm120 0q-8 0-14-9t-6-21q0-12 6-21t14-9q8 0 14 9t6 21q0 12-6 21t-14 9ZM363-489q11-8 25-14t31-11q-2-48-14.5-95.5T373-696q-19-40-42-67.5T285-799q-2 6-3.5 15.5T280-760q0 68 21.5 138T363-489Zm234 0q40-63 61.5-133T680-760q0-14-1.5-23.5T675-799q-23 8-46 35.5T587-696q-18 39-30.5 86.5T541-514q15 4 29 10.5t27 14.5Z" />
+					</svg>
+					<span class="mt-1 font-bold text-primary">Végan</span>
+				</div>
+			{/if}
+		</section>
+
+		<section class="mt-8 prose max-w-none">
+			<h2 class="mb-6 font-serif text-3xl font-bold text-primary">Description</h2>
+			<p class="text-lg">{@html recipe.description}</p>
+		</section>
+
+		<!-- Steps -->
+		<section class="mt-10">
+			<h2 class="mb-6 font-serif text-3xl font-bold text-primary">Préparation</h2>
+			<ol class="space-y-8">
+				{#each sortedSteps as step (step.id)}
+					<li
+						class="flex items-start gap-4 transition-opacity"
+						class:opacity-40={checkedSteps.has(step.step_number)}
+					>
+						<span
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 font-serif text-xl font-bold text-primary"
+						>{step.step_number}</span>
+						<div class="flex-grow pt-1">
+							<p
+								class="text-lg text-on-surface"
+								class:line-through={checkedSteps.has(step.step_number)}
+							>
+								{@html renderStepText(step.description)}
+							</p>
+						</div>
+						<div class="mt-2">
+							<Checkbox onchange={() => toggleStep(step.step_number)} label=""></Checkbox>
+						</div>
+					</li>
+				{/each}
+			</ol>
+		</section>
+
+		<!-- Rating -->
+		<section class="mt-12 border-t border-primary/10 pt-8 text-center">
+			<h3 class="text-xl font-bold text-on-surface">Évaluez cette recette !</h3>
+			<!--			<div class="mt-4 flex items-center justify-center gap-2" onmouseleave={() => (hoverRating = 0)}>-->
+			<!--				{#each { length: 5 } as _, i}-->
+			<!--					{@const rating = i + 1}-->
+			<!--					<button onmouseenter={() => (hoverRating = rating)} onclick={() => (userRating = rating)}>-->
+			<!--						<svg-->
+			<!--							xmlns="http://www.w3.org/2000/svg"-->
+			<!--							height="40"-->
+			<!--							viewBox="0 -960 960 960"-->
+			<!--							width="40"-->
+			<!--							class="transition-colors"-->
+			<!--							class:text-yellow-400={rating <= (hoverRating || userRating)}-->
+			<!--							class:text-gray-300={rating > (hoverRating || userRating)}-->
+			<!--						>-->
+			<!--							<path d="m233-120 65-281L120-551l283-25 117-264 117 264 283 25-178 150 65 281-247-149-247 149Z" />-->
+			<!--						</svg>-->
+			<!--					</button>-->
+			<!--				{/each}-->
+			<!--			</div>-->
+		</section>
+	</main>
+
+	<!-- Ingredients Sheet -->
+	{#if isIngredientsSheetOpen}
+		<div
+			transition:slide={{ duration: 300, axis: 'y' }}
+			class="fixed inset-x-0 bottom-0 z-50 h-[60vh] rounded-t-3xl border-t border-primary/20 bg-surface shadow-2xl"
+		>
+			<div class="flex h-full flex-col p-6">
+				<div class="flex items-center justify-between pb-4">
+					<h2 class="font-serif text-3xl font-bold text-primary">Ingrédients</h2>
+					<button onclick={() => (isIngredientsSheetOpen = false)} class="text-on-surface/80">
+						<svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor">
+							<path
+								d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+						</svg>
+					</button>
+				</div>
+				<div class="flex items-center justify-center gap-6 rounded-full bg-primary/10 p-2">
+					<button onclick={() => updateServings(servings - 1)} class="rounded-full bg-primary/20 p-2 text-primary">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+							<path d="M200-440v-80h560v80H200Z" />
+						</svg>
+					</button>
+					<span class="text-lg font-bold text-primary">{servings} personnes</span>
+					<button onclick={() => updateServings(servings + 1)} class="rounded-full bg-primary/20 p-2 text-primary">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+							<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+						</svg>
+					</button>
+				</div>
+				<ul class="flex-grow space-y-4 overflow-y-auto p-6">
+					{#each sortedIngredients as ingredient (ingredient.id)}
+						<li class="flex items-center gap-4">
+							<span class="font-semibold text-on-surface">{ingredient.name}</span>
+							<div class="flex-grow border-b border-dashed border-primary/20"></div>
+							<span class="font-mono text-on-surface/80">
+								{formatQuantity(ingredient.quantity)} {ingredient.unit}
+							</span>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		</div>
+	{/if}
+
+	<!-- CTA Button -->
+	<div class="fixed z-20 inset-x-0 bottom-0 py-3 px-24">
+		<button
+			class="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-4 font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-100"
+			onclick={() => (isIngredientsSheetOpen = true)}
+		>
+			<svg viewBox="0 -960 960 960" class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg">
+				<path
+					d="M640-80q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170T640-80Zm0-80q66 0 113-47t47-113q0-66-47-113t-113-47q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-480 0q-33 0-56.5-23.5T80-240v-304q0-8 1.5-16t4.5-16l80-184h-6q-17 0-28.5-11.5T120-800v-40q0-17 11.5-28.5T160-880h280q17 0 28.5 11.5T480-840v40q0 17-11.5 28.5T440-760h-6l66 152q-19 10-36 21t-32 25l-84-198h-96l-92 216v304h170q5 21 13.5 41.5T364-160H160Zm480-440q-42 0-71-29t-29-71q0-42 29-71t71-29v200q0-42 29-71t71-29q42 0 71 29t29 71H640Z" />
+			</svg>
+			Voir les ingrédients
+		</button>
+	</div>
+</div>

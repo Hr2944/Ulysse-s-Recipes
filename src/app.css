@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #1A472A;      /* Vert Forêt Profond */
+    --color-secondary: #C8A2C8;     /* Lilas */
+    --color-surface: #F7F3F9;       /* Un blanc cassé très légèrement lilas */
+    --color-on-surface: #1C1B1F;   /* Un gris très foncé, plus doux que le noir pur */
+    --color-on-primary: #FFFFFF;   /* Texte sur fond Vert */
+    --color-on-secondary: #FFFFFF; /* Texte sur fond Lilas */
+}
+
+button {
+    @apply cursor-pointer;
+}
