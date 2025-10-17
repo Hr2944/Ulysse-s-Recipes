@@ -10,6 +10,7 @@
 
 	type Props = {
 		errorMessage: string | null | undefined;
+		errorsListMessages: string[] | null | undefined;
 		recipe: {
 			title: string | null;
 			type: Database['public']['Enums']['recipe_type'] | null;
@@ -39,7 +40,7 @@
 		}
 	}
 
-	let { recipe, errorMessage }: Props = $props();
+	let { recipe, errorMessage, errorsListMessages }: Props = $props();
 
 	let title = $derived(recipe.title);
 	let description = $derived(recipe.description);
@@ -216,16 +217,16 @@
 		<section class="space-y-8">
 			<h2 class="font-serif text-3xl font-semibold text-on-surface">Visibilité</h2>
 			<div>
-				<p class="mb-2 block text-base font-medium text-on-surface">Statut de la recette</p>
+				<p class="mb-2 block text-base font-medium text-on-surface">Visibilité de la recette</p>
 				<input bind:value={status} name="status" type="hidden">
 				<div class="grid grid-cols-2 gap-2 rounded-full bg-surface p-1 shadow-inner">
 					<button class="rounded-full p-3 font-bold transition-all" class:bg-primary={status === 'draft'}
 									class:text-on-primary={status === 'draft'}
-									onclick={() => status = 'draft'} type="button">Brouillon
+									onclick={() => status = 'draft'} type="button">Cachée
 					</button>
 					<button class="rounded-full p-3 font-bold transition-all" class:bg-primary={status === 'published'}
 									class:text-on-primary={status === 'published'}
-									onclick={() => status = 'published'} type="button">Publiée
+									onclick={() => status = 'published'} type="button">Visible
 					</button>
 				</div>
 			</div>
@@ -235,6 +236,13 @@
 
 			{#if errorMessage}
 				<p transition:slide class="text-lg font-bold text-red-800 text-center mb-6">{errorMessage}</p>
+			{/if}
+			{#if errorsListMessages}
+				<ul class="text-lg font-bold text-red-800 text-center mb-6">
+					{#each errorsListMessages as error}
+						<li>{error}</li>
+					{/each}
+				</ul>
 			{/if}
 			<button
 				class="disabled:bg-on-surface/50 w-full rounded-full bg-primary py-4 text-xl font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-100"

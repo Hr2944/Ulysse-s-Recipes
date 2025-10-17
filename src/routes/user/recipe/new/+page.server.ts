@@ -39,7 +39,10 @@ export const actions = {
 		});
 
 		if (!validation.success) {
-			return fail(400, { message: 'Il y a des erreurs dans le formulaire.' });
+			return fail(400, {
+				message: 'Il y a des erreurs dans le formulaire',
+				errorsListMessages: validation.error.issues.map((e) => e.message)
+			});
 		}
 
 		if (coverImageFile.size > 5 * 1024 * 1024) {
