@@ -9,7 +9,7 @@
 
 			<div class="md:col-span-2 lg:col-span-1">
 				<h2 class="font-serif text-2xl font-bold text-primary">Ulysse's Recipes</h2>
-				<p class="mt-4 text-base">La cuisine moderne, simple et accessible pour tous les gourmands.</p>
+				<p class="mt-4 text-base">Les recettes de Ulysse.</p>
 			</div>
 
 			<div>

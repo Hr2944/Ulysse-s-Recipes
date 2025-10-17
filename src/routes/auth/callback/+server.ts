@@ -1,4 +1,4 @@
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
@@ -11,11 +11,10 @@ export const GET: RequestHandler = async ({ url, locals: { supabase, session } }
 
 	if (code) {
 		const { error } = await supabase.auth.exchangeCodeForSession(code);
-		console.log(error);
 		if (!error) {
 			redirect(303, '/user');
 		}
 	}
 
-	error(500);
+	redirect(303, '/auth');
 };

@@ -6,6 +6,7 @@
 	let { form }: PageProps = $props();
 
 	let activeTab = $state<'connexion' | 'inscription'>('connexion');
+	let isSubmitting = $state(false);
 </script>
 
 <main class="flex min-h-screen w-full items-center justify-center bg-surface p-4">
@@ -21,23 +22,30 @@
 			</p>
 		</div>
 
-		<div class="my-10 grid grid-cols-2 gap-2 rounded-full bg-surface p-1 shadow-inner">
-			<button
-				class="rounded-full p-3 text-base font-bold transition-all duration-300
-              {activeTab === 'connexion' ? 'bg-primary text-on-primary shadow-md' : 'text-primary/70 hover:bg-primary/10'}"
-				onclick={() => activeTab = 'connexion'}>
-				Connexion
-			</button>
-			<button
-				class="rounded-full p-3 text-base font-bold transition-all duration-300
-              {activeTab === 'inscription' ? 'bg-primary text-on-primary shadow-md' : 'text-primary/70 hover:bg-primary/10'}"
-				onclick={() => activeTab = 'inscription'}>
-				Inscription
-			</button>
-		</div>
+		<!--		<div class="my-10 grid grid-cols-2 gap-2 rounded-full bg-surface p-1 shadow-inner">-->
+		<!--			<button-->
+		<!--				class="rounded-full p-3 text-base font-bold transition-all duration-300-->
+		<!--              {activeTab === 'connexion' ? 'bg-primary text-on-primary shadow-md' : 'text-primary/70 hover:bg-primary/10'}"-->
+		<!--				onclick={() => activeTab = 'connexion'}>-->
+		<!--				Connexion-->
+		<!--			</button>-->
+		<!--			<button-->
+		<!--				class="rounded-full p-3 text-base font-bold transition-all duration-300-->
+		<!--              {activeTab === 'inscription' ? 'bg-primary text-on-primary shadow-md' : 'text-primary/70 hover:bg-primary/10'}"-->
+		<!--				onclick={() => activeTab = 'inscription'}>-->
+		<!--				Inscription-->
+		<!--			</button>-->
+		<!--		</div>-->
 
 		{#if activeTab === 'connexion'}
-			<form method="POST" action="?/login" use:enhance  in:fade={{ duration: 200, delay: 100 }} class="space-y-6">
+			<form method="POST" action="?/login" in:fade={{ duration: 200, delay: 100 }} class="space-y-6 mt-10" use:enhance={() => {
+				isSubmitting = true;
+
+				return async ({ update }) => {
+					isSubmitting = false;
+					await update();
+				};
+				}}>
 				<div class="group relative">
 					<input
 						name="email"
@@ -55,8 +63,11 @@
 				</div>
 
 				<button
+					disabled={isSubmitting}
+					class:bg-grey-500={isSubmitting}
+					class:bg-secondary={!isSubmitting}
 					type="submit"
-					class="w-full rounded-full bg-secondary py-4 text-xl font-bold text-on-secondary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
+					class="w-full rounded-full py-4 text-xl font-bold text-on-secondary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
 					Envoyer le lien de connexion
 				</button>
 			</form>
@@ -91,11 +102,13 @@
 			</form>
 		{/if}
 
-		{#if form}
+		{#if form && !isSubmitting}
 			{#if form.success}
-				<p transition:slide class="text-lg mt-3 text-center text-green-800 font-bold">Vous avez reçu un lien de connexion par email !</p>
+				<p transition:slide class="text-lg mt-3 text-center text-green-800 font-bold">Vous avez reçu un lien de
+					connexion par email !</p>
 			{:else}
-				<p transition:slide class="text-lg mt-3 text-center text-red-800 font-bold">Une erreur s'est produite, veuillez retenter.</p>
+				<p transition:slide class="text-lg mt-3 text-center text-red-800 font-bold">Une erreur s'est produite, veuillez
+					retenter.</p>
 			{/if}
 		{/if}
 	</div>
