@@ -87,8 +87,10 @@ async function _searchWithFilters(
 	recipes = recipes.map((r) => {
 		return {
 			...r,
-			cover_image_url: supabase.storage.from('recipe-images').getPublicUrl(r.cover_image_url).data
-				.publicUrl
+			cover_image_url:
+				r.cover_image_url === ''
+					? ''
+					: supabase.storage.from('recipe-images').getPublicUrl(r.cover_image_url).data.publicUrl
 		};
 	});
 

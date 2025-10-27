@@ -1,37 +1,24 @@
 <script lang="ts">
-	import { fly } from 'svelte/transition';
 	import { page } from '$app/state';
 
-	let scrolled = $state(false);
 	let focused = $state(false);
 
 	let q = $derived(page.url.searchParams.get('q') ?? '');
-
-	function handleScroll() {
-		scrolled = window.scrollY > 10;
-	}
 </script>
 
-<svelte:window on:scroll={handleScroll} />
-
 <header
-	class="sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-300 {scrolled ? 'bg-surface/95 shadow-md' : 'bg-surface/80 shadow-sm'}">
+	class="sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-300 bg-surface/80 shadow-sm">
 	<nav
 		class="mx-auto flex max-w-7xl items-center justify-between gap-4 p-4 transition-all duration-300"
-		class:py-2={scrolled}
-		class:py-4={!scrolled}
-		in:fly={{ y: -20, duration: 500, delay: 200 }}
 	>
 
 		<a class="flex items-center gap-2 transition-transform duration-300 hover:-translate-y-0.5" href="/">
-    <span
-			class="hidden font-serif font-bold text-primary transition-all duration-300 sm:inline"
-			class:sm:text-2xl={!scrolled}
-			class:sm:text-xl={scrolled}
-		>
-      Ulysse's Recipes
-    </span>
-			<span class="inline font-serif text-3xl font-bold text-primary sm:hidden">U</span>
+			<img src="/src/lib/assets/logo.png" alt="Logo" class="aspect-square w-12 h-12">
+			<span
+				class="hidden font-serif font-bold text-primary transition-all duration-300 sm:inline sm:text-2xl"
+			>
+				Ulysse's Recipes
+			</span>
 		</a>
 
 		<div class="flex-grow">

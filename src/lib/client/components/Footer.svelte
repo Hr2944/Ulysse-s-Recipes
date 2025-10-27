@@ -9,7 +9,7 @@
 
 			<div class="md:col-span-2 lg:col-span-1">
 				<h2 class="font-serif text-2xl font-bold text-primary">Ulysse's Recipes</h2>
-				<p class="mt-4 text-base">Les recettes de Ulysse.</p>
+				<p class="mt-4 text-base">C'est les recettes de Ulysse le chat.</p>
 			</div>
 
 			<div>

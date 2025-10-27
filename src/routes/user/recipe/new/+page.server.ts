@@ -1,5 +1,13 @@
 import { type Actions, fail, redirect } from '@sveltejs/kit';
-import { recipeSchema } from '$lib/server/recipe';
+import { draftRecipeSchema, recipeSchema } from '$lib/server/recipe';
+
+const MAX_FILE_SIZE_MB = 5;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+const SCHEMA_MAP = {
+	draft: draftRecipeSchema,
+	published: recipeSchema
+};
 
 export const actions = {
 	default: async ({ locals: { supabase, user }, request }) => {
@@ -10,19 +18,48 @@ export const actions = {
 
 		const formData = await request.formData();
 
-		const coverImageFile = formData.get('cover_image') as File;
+		const status = formData.get('status');
+		const coverImageFile = formData.get('cover_image');
 
-		if (!coverImageFile || coverImageFile.size <= 0) {
-			return fail(400, { message: 'Veuillez fournir une image de présentation.' });
+		let rawIngredients;
+		let rawSteps;
+
+		try {
+			const ingredientsString = (formData.get('ingredients') as string) || '[]';
+			const stepsString = (formData.get('steps') as string) || '[]';
+			rawIngredients = JSON.parse(ingredientsString);
+			rawSteps = JSON.parse(stepsString);
+		} catch (_) {
+			return fail(400, {
+				message: 'Format des ingrédients ou des étapes invalide.'
+			});
 		}
 
-		const isVegetarian = formData.get('is_vegetarian') === 'on';
-		const isVegan = formData.get('is_vegan') === 'on';
+		const validationSchema = SCHEMA_MAP[status as keyof typeof SCHEMA_MAP];
 
-		const rawIngredients = JSON.parse(formData.get('ingredients') as string);
-		const rawSteps = JSON.parse(formData.get('steps') as string);
+		if (!validationSchema) {
+			return fail(400, { message: 'Statut invalide.' });
+		}
 
-		const validation = recipeSchema.safeParse({
+		if (!(coverImageFile instanceof File)) {
+			return fail(400, { message: 'Veuillez fournir un fichier image.' });
+		}
+
+		const hasFile = coverImageFile.size > 0;
+
+		if (status === 'published' && !hasFile) {
+			return fail(400, {
+				message: 'Veuillez fournir une image de présentation.'
+			});
+		}
+
+		if (hasFile && coverImageFile.size > MAX_FILE_SIZE_BYTES) {
+			return fail(400, {
+				message: `L'image de présentation ne doit pas dépasser ${MAX_FILE_SIZE_MB} Mo.`
+			});
+		}
+
+		const validation = validationSchema.safeParse({
 			title: formData.get('title'),
 			description: formData.get('description'),
 			prep_time_minutes: formData.get('prep_time_minutes'),
@@ -32,8 +69,8 @@ export const actions = {
 			cost: formData.get('cost'),
 			type: formData.get('type'),
 			status: formData.get('status'),
-			is_vegetarian: isVegetarian,
-			is_vegan: isVegan,
+			is_vegetarian: formData.get('is_vegetarian') === 'on',
+			is_vegan: formData.get('is_vegan') === 'on',
 			ingredients: rawIngredients,
 			steps: rawSteps
 		});
@@ -45,42 +82,55 @@ export const actions = {
 			});
 		}
 
-		if (coverImageFile.size > 5 * 1024 * 1024) {
-			return fail(400, { message: "L'image ne doit pas dépasser 5 Mo." });
+		let coverImagePath = '';
+		if (hasFile) {
+			const lastDot = coverImageFile.name.lastIndexOf('.');
+			const fileExt = lastDot > 0 ? coverImageFile.name.substring(lastDot + 1).toLowerCase() : null;
+
+			if (!fileExt) {
+				return fail(400, { message: "L'image de présentation n'a pas d'extension valide." });
+			}
+
+			coverImagePath = `public/${user.id}/${crypto.randomUUID()}.${fileExt}`;
+
+			const { error: uploadError } = await supabase.storage
+				.from('recipe-images')
+				.upload(coverImagePath, coverImageFile);
+
+			if (uploadError) {
+				return fail(500, { message: "Erreur lors de l'upload de l'image." });
+			}
 		}
 
-		const fileExt = coverImageFile.name.split('.').pop();
-		const coverImagePath = `public/${user.id}/${crypto.randomUUID()}.${fileExt}`;
+		const { data: embeddingData, error: embeddingError } = await supabase.functions.invoke(
+			'embed',
+			{
+				body: { input: validation.data.title }
+			}
+		);
 
-		const { error: uploadError } = await supabase.storage
-			.from('recipe-images')
-			.upload(coverImagePath, coverImageFile);
-
-		if (uploadError) {
-			return fail(500, { message: "Erreur lors de l'upload de l'image." });
+		if (embeddingError) {
+			return fail(500, { message: "Erreur lors de l'enregistrement, veuillez réessayer." });
 		}
-
-		const { data: embedding } = await supabase.functions.invoke('embed', {
-			body: { input: validation.data.title }
-		});
 
 		const validatedData = {
 			...validation.data,
 			cover_image_url: coverImagePath,
-			embedding: embedding.embedding
+			embedding: embeddingData.embedding
 		};
 
 		const { ingredients, steps, ...recipeData } = validatedData;
 
-		const { error } = await supabase.rpc('create_recipe_with_relations', {
+		const { error: dbError } = await supabase.rpc('create_recipe_with_relations', {
 			p_author_id: userId,
 			p_recipe_data: recipeData,
-			p_ingredients: ingredients,
-			p_steps: steps
+			p_ingredients: ingredients ?? [],
+			p_steps: steps ?? []
 		});
 
-		if (error) {
-			return fail(500, { message: 'La création a échoué.' });
+		if (dbError) {
+			console.log(dbError);
+			return fail(500, { message: "Erreur lors de l'enregistrement, veuillez réessayer." });
 		}
 
 		redirect(303, '/user');

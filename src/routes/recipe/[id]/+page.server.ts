@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		error(500, 'Erreur lors de la récupération de la recette.');
 	}
 
-	recipe.cover_image_url = supabase.storage
+	recipe.cover_image_url = recipe.cover_image_url === '' ? '' : supabase.storage
 		.from('recipe-images')
 		.getPublicUrl(recipe.cover_image_url).data.publicUrl;
 

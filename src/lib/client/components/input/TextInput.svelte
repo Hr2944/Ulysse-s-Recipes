@@ -2,6 +2,7 @@
 	let { value = $bindable(), type = "text", name = null, label } = $props();
 
 	let id = $state(Math.random().toString());
+
 </script>
 
 <div class="group relative">

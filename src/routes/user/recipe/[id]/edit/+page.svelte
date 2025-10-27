@@ -5,4 +5,4 @@
 	let { data, form }: PageProps = $props();
 </script>
 
-<RecipeEditor errorMessage={form?.message} recipe={data.recipe}></RecipeEditor>
+<RecipeEditor errorsListMessages={form?.errorsListMessages} errorMessage={form?.message} recipe={data.recipe}></RecipeEditor>

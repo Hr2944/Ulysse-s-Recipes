@@ -1,6 +1,14 @@
 import { type Actions, error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { recipeSchema } from '$lib/server/recipe';
+import { draftRecipeSchema, recipeSchema } from '$lib/server/recipe';
+
+const MAX_FILE_SIZE_MB = 5;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+const SCHEMA_MAP = {
+	draft: draftRecipeSchema,
+	published: recipeSchema
+};
 
 export const actions = {
 	default: async ({ locals: { supabase, user }, params, request }) => {
@@ -11,24 +19,63 @@ export const actions = {
 		const recipeId = params.id;
 
 		if (!recipeId) {
-			return fail(404, 'Recette non trouvée.');
+			return fail(404, { message: 'Recette non trouvée.' });
 		}
 
 		const formData = await request.formData();
+		const status = formData.get('status');
+		const coverImageFile = formData.get('cover_image');
 
-		const coverImageFile = formData.get('cover_image') as File;
+		let rawIngredients;
+		let rawSteps;
+		try {
+			const ingredientsString = (formData.get('ingredients') as string) || '[]';
+			const stepsString = (formData.get('steps') as string) || '[]';
+			rawIngredients = JSON.parse(ingredientsString);
+			rawSteps = JSON.parse(stepsString);
+		} catch (_) {
+			return fail(400, {
+				message: 'Format des ingrédients ou des étapes invalide.'
+			});
+		}
 
-		if (!coverImageFile) {
+		const validationSchema = SCHEMA_MAP[status as keyof typeof SCHEMA_MAP];
+
+		if (!validationSchema) {
+			return fail(400, { message: 'Statut invalide.' });
+		}
+
+		const { data: existingRecipe, error: fetchError } = await supabase
+			.from('recipes')
+			.select('cover_image_url')
+			.eq('id', recipeId)
+			.eq('author_id', user.id)
+			.single();
+
+		if (fetchError) {
+			return fail(404, { message: 'Recette non trouvée ou non modifiable.' });
+		}
+		const oldCoverImagePath = existingRecipe?.cover_image_url || '';
+
+		if (!(coverImageFile instanceof File)) {
 			return fail(400, { message: 'Veuillez fournir une image de présentation.' });
 		}
 
-		const isVegetarian = formData.get('is_vegetarian') === 'on';
-		const isVegan = formData.get('is_vegan') === 'on';
+		const hasNewFile = coverImageFile.size > 0;
 
-		const rawIngredients = JSON.parse(formData.get('ingredients') as string);
-		const rawSteps = JSON.parse(formData.get('steps') as string);
+		if (status === 'published' && !hasNewFile && !oldCoverImagePath) {
+			return fail(400, {
+				message: 'Veuillez fournir une image de présentation.'
+			});
+		}
 
-		const validation = recipeSchema.safeParse({
+		if (hasNewFile && coverImageFile.size > MAX_FILE_SIZE_BYTES) {
+			return fail(400, {
+				message: `L'image de présentation ne doit pas dépasser ${MAX_FILE_SIZE_MB} Mo.`
+			});
+		}
+
+		const validation = validationSchema.safeParse({
 			title: formData.get('title'),
 			description: formData.get('description'),
 			prep_time_minutes: formData.get('prep_time_minutes'),
@@ -38,27 +85,33 @@ export const actions = {
 			cost: formData.get('cost'),
 			type: formData.get('type'),
 			status: formData.get('status'),
-			is_vegetarian: isVegetarian,
-			is_vegan: isVegan,
+			is_vegetarian: formData.get('is_vegetarian') === 'on',
+			is_vegan: formData.get('is_vegan') === 'on',
 			ingredients: rawIngredients,
 			steps: rawSteps
 		});
 
 		if (!validation.success) {
-			console.log(validation.error);
-			return fail(400, { message: 'Il y a des erreurs dans le formulaire.' });
+			return fail(400, {
+				message: 'Il y a des erreurs dans le formulaire',
+				errorsListMessages: validation.error.issues.map((e) => e.message)
+			});
 		}
 
-		let coverImagePath: string;
+		// --- 7. Image Upload & Path Handling (Merged Logic) ---
+		let finalCoverImagePath = oldCoverImagePath; // Default to the old image
 
-		// User modified the image
-		if (coverImageFile && coverImageFile.size > 0) {
-			console.log(coverImageFile);
-			if (coverImageFile.size > 5 * 1024 * 1024) {
-				return fail(400, { message: "L'image ne doit pas dépasser 5 Mo." });
+		if (hasNewFile) {
+			// User uploaded a new file, so we replace the old one
+
+			// Robust extension check (from 'new' page)
+			const lastDot = coverImageFile.name.lastIndexOf('.');
+			const fileExt = lastDot > 0 ? coverImageFile.name.substring(lastDot + 1).toLowerCase() : null;
+
+			if (!fileExt) {
+				return fail(400, { message: "L'image de présentation n'a pas une extension valide." });
 			}
 
-			const fileExt = coverImageFile.name.split('.').pop();
 			const newPath = `public/${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
 			const { error: uploadError } = await supabase.storage
@@ -66,70 +119,60 @@ export const actions = {
 				.upload(newPath, coverImageFile);
 
 			if (uploadError) {
-				console.log(uploadError);
-				return fail(500, { message: "Erreur lors de l'upload de l'image." });
+				return fail(500, { message: "Erreur lors de l'upload de l'image de présentation." });
 			}
 
-			const { data: old_cover_image_url } = await supabase
-				.from('recipes')
-				.select('cover_image_url')
-				.eq('id', recipeId)
-				.eq('author_id', user.id)
-				.single();
+			finalCoverImagePath = newPath; // Set the path to the new image
 
-			if (old_cover_image_url) {
-				await supabase.storage.from('recipe-images').remove([old_cover_image_url.cover_image_url]);
+			// Delete the old image (preserved from 'edit' logic)
+			if (oldCoverImagePath) {
+				// Don't await, let it run in the background
+				supabase.storage.from('recipe-images').remove([oldCoverImagePath]);
 			}
-
-			coverImagePath = newPath;
-		} else {
-			// User didn't modify the image
-			const { data: old_cover_image_url } = await supabase
-				.from('recipes')
-				.select('cover_image_url')
-				.eq('id', recipeId)
-				.eq('author_id', user.id)
-				.single();
-
-			if (!old_cover_image_url) {
-				return fail(400, { message: 'Une image de présentation doit être fournie.' });
-			}
-
-			coverImagePath = old_cover_image_url.cover_image_url;
 		}
 
-		if (!coverImagePath) {
-			return fail(400, { message: "Erreur avec l'image de présentation." });
+		// --- 8. Embedding (from 'new' page) ---
+		const { data: embeddingData, error: embeddingError } = await supabase.functions.invoke(
+			'embed',
+			{
+				body: { input: validation.data.title }
+			}
+		);
+
+		// Robust error check (from 'new' page)
+		if (embeddingError) {
+			return fail(500, {
+				message: "Erreur lors de l'enregistrement, veuillez réessayer."
+			});
 		}
 
-		const { data: embedding } = await supabase.functions.invoke('embed', {
-			body: { input: validation.data.title }
-		});
-
+		// --- 9. Database Update ---
 		const validatedData = {
 			...validation.data,
-			cover_image_url: coverImagePath,
-			embedding: embedding.embedding
+			cover_image_url: finalCoverImagePath, // Use the determined path
+			embedding: embeddingData.embedding
 		};
 
 		const { ingredients, steps, ...recipeData } = validatedData;
 
-		const { error } = await supabase.rpc('update_recipe_details', {
+		// Use the 'update' RPC (preserved from 'edit' logic)
+		const { error: dbError } = await supabase.rpc('update_recipe_details', {
 			p_recipe_id: recipeId,
 			p_author_id: userId,
 			p_recipe_data: recipeData,
-			p_ingredients: ingredients,
-			p_steps: steps
+			p_ingredients: ingredients ?? [],
+			p_steps: steps ?? []
 		});
 
-		if (error) {
-			return fail(500, { message: 'La mise à jour a échoué.' });
+		if (dbError) {
+			return fail(500, { message: "Erreur lors de l'enregistrement, veuillez réessayer." });
 		}
 
 		redirect(303, '/user');
 	}
 } satisfies Actions;
 
+// --- Load Function (No changes needed) ---
 export const load: PageServerLoad = async ({ params, locals: { supabase, user } }) => {
 	if (!user) {
 		throw redirect(303, '/auth');
@@ -152,9 +195,10 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user } 
 		error(500, 'Erreur lors de la récupération de la recette.');
 	}
 
-	recipe.cover_image_url = supabase.storage
-		.from('recipe-images')
-		.getPublicUrl(recipe.cover_image_url).data.publicUrl;
+	recipe.cover_image_url =
+		recipe.cover_image_url === ''
+			? ''
+			: supabase.storage.from('recipe-images').getPublicUrl(recipe.cover_image_url).data.publicUrl;
 
 	return { recipe };
 };

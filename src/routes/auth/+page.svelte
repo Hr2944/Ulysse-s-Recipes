@@ -64,7 +64,7 @@
 
 				<button
 					disabled={isSubmitting}
-					class:bg-grey-500={isSubmitting}
+					class:bg-gray-400={isSubmitting}
 					class:bg-secondary={!isSubmitting}
 					type="submit"
 					class="w-full rounded-full py-4 text-xl font-bold text-on-secondary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">

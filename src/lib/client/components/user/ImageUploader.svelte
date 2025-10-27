@@ -37,7 +37,7 @@
 		class="relative flex h-64 w-full cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-primary/50 bg-primary/5 text-center transition-colors hover:border-primary hover:bg-primary/10"
 	>
 		{#if previewUrl}
-			<img src={previewUrl} alt="Aperçu de la recette" class="h-full w-full rounded-2xl object-cover" />
+			<img src={previewUrl} alt="Présentation de la recette" class="h-full w-full rounded-2xl object-cover" />
 			<div
 				class="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-black/50 text-white opacity-0 transition-opacity hover:opacity-100">
 				<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">

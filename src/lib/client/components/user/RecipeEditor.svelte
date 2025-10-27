@@ -47,29 +47,29 @@
 	let prep_time_minutes = $derived(recipe.prep_time_minutes);
 	let cook_time_minutes = $derived(recipe.cook_time_minutes);
 	let servings = $derived(recipe.servings);
-	let difficulty = $derived(recipe.difficulty);
-	let type = $derived(recipe.type);
+	let difficulty = $derived(recipe.difficulty || 'facile');
+	let type = $derived(recipe.type || 'plat');
 	let status = $derived(recipe.status || 'draft');
-	let cost = $derived(recipe.cost);
+	let cost = $derived(recipe.cost || 'bon marché');
 	let is_vegetarian = $derived(recipe.is_vegetarian || false);
 	let is_vegan = $derived(recipe.is_vegan || false);
 	let cover_image_url = $derived(recipe.cover_image_url);
 
-	let ingredients = $derived([...recipe.ingredients]);
+	let ingredients = $state(recipe.ingredients);
 	let ingredientsJson = $derived(JSON.stringify(ingredients));
-	let steps = $derived([...recipe.steps]);
+	let steps = $state(recipe.steps);
 	let stepsJson = $derived(JSON.stringify(steps));
 
 	let isSubmitting = $state(false);
 
 	function addIngredient() {
-		ingredients = [...ingredients, {
+		ingredients.push({
 			name: '',
 			quantity: 1,
 			unit: 'g',
 			id: Math.random(),
 			order: ingredients.length + 1
-		}];
+		});
 	}
 
 	function removeIngredient(id: number) {
@@ -215,18 +215,18 @@
 		</section>
 
 		<section class="space-y-8">
-			<h2 class="font-serif text-3xl font-semibold text-on-surface">Visibilité</h2>
+			<h2 class="font-serif text-3xl font-semibold text-on-surface">Statut</h2>
 			<div>
-				<p class="mb-2 block text-base font-medium text-on-surface">Visibilité de la recette</p>
+				<p class="mb-2 block text-base font-medium text-on-surface">Statut de la recette</p>
 				<input bind:value={status} name="status" type="hidden">
 				<div class="grid grid-cols-2 gap-2 rounded-full bg-surface p-1 shadow-inner">
 					<button class="rounded-full p-3 font-bold transition-all" class:bg-primary={status === 'draft'}
 									class:text-on-primary={status === 'draft'}
-									onclick={() => status = 'draft'} type="button">Cachée
+									onclick={() => status = 'draft'} type="button">Brouillon
 					</button>
 					<button class="rounded-full p-3 font-bold transition-all" class:bg-primary={status === 'published'}
 									class:text-on-primary={status === 'published'}
-									onclick={() => status = 'published'} type="button">Visible
+									onclick={() => status = 'published'} type="button">Publié
 					</button>
 				</div>
 			</div>
