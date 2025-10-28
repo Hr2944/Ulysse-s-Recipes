@@ -9,12 +9,12 @@
 <div class="flex items-center">
     {#each Array(maxRating) as _, i}
         {@const starValue = i + 1}
-        <button 
+        <button
             on:mouseenter={() => hoverRating = starValue}
             on:mouseleave={() => hoverRating = 0}
             on:click={() => onRate(starValue)}
             class="text-2xl transition-colors"
-            style:color={starValue <= (hoverRating || rating) ? 'var(--color-secondary)' : '#ccc'}
+            style:color={starValue <= (hoverRating || rating) ? 'var(--color-primart)' : '#ccc'}
         >
             ★
         </button>

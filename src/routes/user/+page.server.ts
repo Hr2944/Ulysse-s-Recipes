@@ -57,5 +57,11 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, user } }) 
 		error(500, 'Erreur lors du chargement des recettes, veuillez recharger la page.');
 	}
 
-	return { recipes: queryResult.recipes };
+	const { data: profile } = await supabase
+		.from('profiles')
+		.select('username')
+		.eq('id', user.id)
+		.single();
+
+	return { recipes: queryResult.recipes, username: profile?.username };
 };

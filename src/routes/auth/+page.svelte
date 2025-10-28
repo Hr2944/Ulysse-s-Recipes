@@ -51,12 +51,12 @@
 						name="email"
 						type="email"
 						id="email-login"
-						class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-secondary focus:outline-none"
+						class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-primary focus:outline-none"
 						placeholder="email"
 					/>
 					<label
 						for="email-login"
-						class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-secondary
+						class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-primary
                   peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-lg peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:text-xs">
 						Adresse e-mail
 					</label>
@@ -65,9 +65,9 @@
 				<button
 					disabled={isSubmitting}
 					class:bg-gray-400={isSubmitting}
-					class:bg-secondary={!isSubmitting}
+					class:bg-primary={!isSubmitting}
 					type="submit"
-					class="w-full rounded-full py-4 text-xl font-bold text-on-secondary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
+					class="w-full rounded-full py-4 text-xl font-bold text-on-primary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
 					Envoyer le lien de connexion
 				</button>
 			</form>
@@ -76,27 +76,27 @@
 			<form method="POST" action="?/signup" use:enhance in:fade={{ duration: 200, delay: 100 }} class="space-y-6">
 				<div class="group relative">
 					<input type="email" id="email-register" name="email"
-								 class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-secondary focus:outline-none"
+								 class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-primary focus:outline-none"
 								 placeholder="email" />
 					<label for="email-register"
-								 class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-secondary peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-lg peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:text-xs">
+								 class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-primary peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-lg peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:text-xs">
 						Adresse e-mail
 					</label>
 				</div>
 
 				<div class="group relative">
 					<input type="text" id="username" name="username"
-								 class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-secondary focus:outline-none"
+								 class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-primary focus:outline-none"
 								 placeholder="username" />
 					<label for="username"
-								 class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-secondary peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-lg peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:text-xs">
+								 class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-primary peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-lg peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:text-xs">
 						Pseudonyme
 					</label>
 				</div>
 
 				<button
 					type="submit"
-					class="w-full rounded-full bg-secondary py-4 text-xl font-bold text-on-secondary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
+					class="w-full rounded-full bg-primary py-4 text-xl font-bold text-on-primary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
 					Créer mon compte
 				</button>
 			</form>

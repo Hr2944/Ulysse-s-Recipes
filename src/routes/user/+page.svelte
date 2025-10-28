@@ -53,9 +53,7 @@
 			}
 		}
 
-		console.log('icic');
 		await goto(`/user?${newParams.toString()}`, { keepFocus: true, noScroll: true });
-		console.log('pas la');
 		isFiltering = false;
 	}
 
@@ -66,7 +64,19 @@
 	}
 </script>
 
-<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<main class="mx-auto px-4 py-8 sm:px-6 lg:px-8">
+	<form action="?/logout" class="mb-8 flex flex-col items-start justify-between gap-4 border-b border-black/10 pb-6 sm:flex-row sm:items-center" method="POST">
+		<h1 class="font-serif text-3xl font-bold text-primary md:text-4xl">
+			Bonjour {data.username ?? ''}
+		</h1>
+
+		<button
+			class="rounded-md bg-primary px-5 py-2.5 font-bold text-on-primary shadow-sm transition-transform hover:scale-105"
+		>
+			Me déconnecter
+		</button>
+	</form>
+
 	<div
 		class="mb-8 flex flex-col items-start justify-between gap-4 border-b border-black/10 pb-6 sm:flex-row sm:items-center">
 		<div>
@@ -93,8 +103,8 @@
 			onReset={resetFilters}
 		/>
 	</div>
-	{#if recipes && recipes.length !== 0}
 
+	{#if recipes && recipes.length !== 0}
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each recipes as recipe (recipe.id)}
 				<RecipePreview recipe={recipe}></RecipePreview>
@@ -103,4 +113,5 @@
 	{:else}
 		<p class="text-lg font-bold mx-auto text-center">Aucune de vos recettes ne correspond à ces critères.</p>
 	{/if}
+
 </main>
