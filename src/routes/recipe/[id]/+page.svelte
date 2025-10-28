@@ -4,11 +4,9 @@
 	import { page } from '$app/state';
 	import Checkbox from '$lib/client/components/input/Checkbox.svelte';
 
-	// ✅ Access props with runes
 	const { data } = $props<{ data: PageData }>();
 	const { recipe } = data;
 
-	// --- State ---
 	let isIngredientsSheetOpen = $state(false);
 	let servings = $state(
 		parseInt(page.url.searchParams.get('pour') ?? '') || recipe.servings
@@ -16,10 +14,7 @@
 	const baseServings = recipe.servings;
 
 	let checkedSteps = $state(new Set<number>());
-	let userRating = $state(0);
-	let hoverRating = $state(0);
 
-	// --- Derived values ---
 	const dynamicIngredients = $derived(
 		recipe.ingredients.map((ing) => ({
 			...ing,
@@ -27,7 +22,6 @@
 		}))
 	);
 
-	// Pre-sort steps and ingredients once (not in template)
 	const sortedSteps = $derived(
 		[...recipe.steps].sort((a, b) => a.step_number - b.step_number)
 	);
@@ -35,15 +29,6 @@
 		[...dynamicIngredients].sort((a, b) => (a.order || 99) - (b.order || 99))
 	);
 
-	// --- Effects ---
-	// Keep URL param synced when servings changes
-	// $effect(() => {
-	// 	const url = new URL(page.url);
-	// 	url.searchParams.set('pour', String(servings));
-	// 	goto(url, { replaceState: true, noScroll: true, keepFocus: true });
-	// });
-
-	// --- Utilities ---
 	function updateServings(newServings: number) {
 		if (newServings > 0) servings = newServings;
 	}
@@ -57,14 +42,30 @@
 		return String(roundedQty);
 	}
 
-	function renderStepText(description: string) {
+	function escapeRegExp(str: string): string {
+		return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	}
+
+	function renderStepText(description: string): string {
 		let renderedText = description;
-		for (const ingredient of dynamicIngredients) {
-			const regex = new RegExp(`\\b${ingredient.name}\\b`, 'gi');
+
+		const sortedIngredients = [...dynamicIngredients].sort(
+			(a, b) => b.name.length - a.name.length
+		);
+
+		for (const ingredient of sortedIngredients) {
+			const escapedName = escapeRegExp(ingredient.name);
+
+			const regex = new RegExp(`\\b((?:l'|d')?${escapedName}(?:s|x)?)\\b`, 'gi');
+
 			const formattedQty = formatQuantity(ingredient.quantity);
-			const replacement = `<span class="font-bold text-primary">${ingredient.name} (${formattedQty}${ingredient.unit ? ' ' + ingredient.unit : ''})</span>`;
+			const unit = ingredient.unit ? ` ${ingredient.unit}` : '';
+
+			const replacement = `<span class="font-bold text-primary">$1 (${formattedQty}${unit})</span>`;
+
 			renderedText = renderedText.replace(regex, replacement);
 		}
+
 		return renderedText;
 	}
 
@@ -74,7 +75,6 @@
 		} else {
 			checkedSteps.add(stepNumber);
 		}
-		// reassign to trigger reactivity
 		checkedSteps = new Set(checkedSteps);
 	}
 </script>
@@ -102,12 +102,11 @@
 			</div>
 		</section>
 
-		<!-- Meta info cards -->
 		<section class="mt-8 grid grid-cols-2 gap-4 rounded-2xl bg-primary/5 p-4 text-center md:grid-cols-4">
 			<div class="flex flex-col items-center">
 				<svg class="w-8 h-8 fill-primary" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
 					<path
-						d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm0 200q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Z" />
+						d="M360-400h80v-200h-80v200Zm-160-60q-46-23-73-66.5T100-621q0-75 51.5-127T278-800q12 0 24.5 2t24.5 5q25-41 65-64t88-23q48 0 88 23t65 64q12-3 24-5t25-2q75 0 126.5 52T860-621q0 51-27 94.5T760-460v220H200v-220Zm320 60h80v-200h-80v200Zm-240 80h400v-189l44-22q26-13 41-36.5t15-52.5q0-42-28.5-71T682-720q-11 0-20 2t-19 5l-47 13-31-52q-14-23-36.5-35.5T480-800q-26 0-48.5 12.5T395-752l-31 52-48-13q-10-2-19.5-4.5T277-720q-41 0-69 29t-28 71q0 29 15 52.5t41 36.5l44 22v189Zm-80 80h80v80h400v-80h80v160H200v-160Zm280-80Z" />
 				</svg>
 				<span class="mt-1 font-bold capitalize text-primary">{recipe.difficulty}</span>
 			</div>
@@ -184,41 +183,19 @@
 				{/each}
 			</ol>
 		</section>
-
-		<!-- Rating -->
-		<section class="mt-12 border-t border-primary/10 pt-8 text-center">
-			<h3 class="text-xl font-bold text-on-surface">Évaluez cette recette !</h3>
-			<!--			<div class="mt-4 flex items-center justify-center gap-2" onmouseleave={() => (hoverRating = 0)}>-->
-			<!--				{#each { length: 5 } as _, i}-->
-			<!--					{@const rating = i + 1}-->
-			<!--					<button onmouseenter={() => (hoverRating = rating)} onclick={() => (userRating = rating)}>-->
-			<!--						<svg-->
-			<!--							xmlns="http://www.w3.org/2000/svg"-->
-			<!--							height="40"-->
-			<!--							viewBox="0 -960 960 960"-->
-			<!--							width="40"-->
-			<!--							class="transition-colors"-->
-			<!--							class:text-yellow-400={rating <= (hoverRating || userRating)}-->
-			<!--							class:text-gray-300={rating > (hoverRating || userRating)}-->
-			<!--						>-->
-			<!--							<path d="m233-120 65-281L120-551l283-25 117-264 117 264 283 25-178 150 65 281-247-149-247 149Z" />-->
-			<!--						</svg>-->
-			<!--					</button>-->
-			<!--				{/each}-->
-			<!--			</div>-->
-		</section>
 	</main>
 
-	<!-- Ingredients Sheet -->
 	{#if isIngredientsSheetOpen}
 		<div
 			transition:slide={{ duration: 300, axis: 'y' }}
-			class="fixed inset-x-0 bottom-0 z-50 h-[60vh] rounded-t-3xl border-t border-primary/20 bg-surface shadow-2xl"
+			class="shadow-ingredient-sheet fixed inset-x-0 bottom-0 z-50 max-h-[60vh] rounded-t-3xl border-t border-primary/20 bg-surface"
 		>
 			<div class="flex h-full flex-col p-6">
 				<div class="flex items-center justify-between pb-4">
 					<h2 class="font-serif text-3xl font-bold text-primary">Ingrédients</h2>
-					<button onclick={() => (isIngredientsSheetOpen = false)} class="text-on-surface/80">
+					<button onclick={() => (isIngredientsSheetOpen = false)}
+									class="text-on-surface/80 hover:bg-on-surface/20 rounded-full p-1 transition-colors"
+									aria-label="Fermer la fenêtre des ingrédients">
 						<svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor">
 							<path
 								d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
@@ -226,13 +203,15 @@
 					</button>
 				</div>
 				<div class="flex items-center justify-center gap-6 rounded-full bg-primary/10 p-2">
-					<button onclick={() => updateServings(servings - 1)} class="rounded-full bg-primary/20 p-2 text-primary">
+					<button onclick={() => updateServings(servings - 1)} class="rounded-full bg-primary/20 p-2 text-primary"
+									aria-label="Retirer un couvert">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
 							<path d="M200-440v-80h560v80H200Z" />
 						</svg>
 					</button>
 					<span class="text-lg font-bold text-primary">{servings} personnes</span>
-					<button onclick={() => updateServings(servings + 1)} class="rounded-full bg-primary/20 p-2 text-primary">
+					<button onclick={() => updateServings(servings + 1)} class="rounded-full bg-primary/20 p-2 text-primary"
+									aria-label="Ajouter un couvert">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
 							<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
 						</svg>
@@ -253,10 +232,9 @@
 		</div>
 	{/if}
 
-	<!-- CTA Button -->
-	<div class="fixed z-20 inset-x-0 bottom-0 py-3 px-24">
+	<div class="fixed z-20 inset-x-0 bottom-0 p-4 flex items-center justify-center md:justify-end pointer-events-none">
 		<button
-			class="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-4 font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-100"
+			class="pointer-events-auto flex w-full max-w-lg items-center justify-center gap-2 rounded-full bg-primary px-16 py-4 font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-100"
 			onclick={() => (isIngredientsSheetOpen = true)}
 		>
 			<svg class="w-6 h-6 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
@@ -267,3 +245,9 @@
 		</button>
 	</div>
 </div>
+
+<style>
+    .shadow-ingredient-sheet {
+        box-shadow: 0 -20px 50px -10px rgb(0 0 0 / 0.25);
+    }
+</style>
