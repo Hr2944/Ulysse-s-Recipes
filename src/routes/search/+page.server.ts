@@ -1,13 +1,9 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { FilterValues } from '$lib/client/components/filterControls.types';
 import { searchWithFilters } from '$lib/server/search';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url, locals: { supabase, user } }) => {
-	if (!user) {
-		redirect(303, '/auth');
-	}
-
+export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	const filters: FilterValues = {
 		q: url.searchParams.get('q') ?? undefined,
 		sort: (url.searchParams.get('sort') as FilterValues['sort']) ?? 'newest',

@@ -38,16 +38,6 @@
 			<h2 class="flex-grow font-serif text-xl font-bold text-on-surface">
 				{recipe.title}
 			</h2>
-
-			{#if recipe.status === 'published'}
-        <span class="flex-shrink-0 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
-          Publiée
-        </span>
-			{:else}
-        <span class="flex-shrink-0 rounded-full bg-gray-200 px-3 py-1 text-xs font-medium text-gray-800">
-          Brouillon
-        </span>
-			{/if}
 		</div>
 	</div>
 

@@ -188,36 +188,41 @@
 	{#if isIngredientsSheetOpen}
 		<div
 			transition:slide={{ duration: 300, axis: 'y' }}
-			class="shadow-ingredient-sheet fixed inset-x-0 bottom-0 z-50 max-h-[60vh] rounded-t-3xl border-t border-primary/20 bg-surface"
+			class="shadow-ingredient-sheet fixed inset-x-0 bottom-0 z-50 max-h-[50vh] overflow-y-scroll rounded-t-3xl bg-surface"
 		>
-			<div class="flex h-full flex-col p-6">
-				<div class="flex items-center justify-between pb-4">
-					<h2 class="font-serif text-3xl font-bold text-primary">Ingrédients</h2>
-					<button onclick={() => (isIngredientsSheetOpen = false)}
-									class="text-on-surface/80 hover:bg-on-surface/20 rounded-full p-1 transition-colors"
-									aria-label="Fermer la fenêtre des ingrédients">
-						<svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor">
-							<path
-								d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
-						</svg>
-					</button>
+			<div class="flex h-full flex-col px-6">
+				<div class="sticky top-0 pt-6 bg-surface">
+					<div class="flex items-center justify-between pb-4">
+						<h2 class="font-serif text-3xl font-bold text-primary">Ingrédients</h2>
+						<button onclick={() => (isIngredientsSheetOpen = false)}
+										class="text-on-surface/80 hover:bg-on-surface/20 rounded-full p-1 transition-colors"
+										aria-label="Fermer la fenêtre des ingrédients">
+							<svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32"
+									 fill="currentColor">
+								<path
+									d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+							</svg>
+						</button>
+					</div>
+					<div class="flex items-center justify-center gap-6 rounded-full bg-primary/10 p-2">
+						<button onclick={() => updateServings(servings - 1)} class="rounded-full bg-primary/20 p-2 text-primary"
+										aria-label="Retirer un couvert">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
+									 fill="currentColor">
+								<path d="M200-440v-80h560v80H200Z" />
+							</svg>
+						</button>
+						<span class="text-lg font-bold text-primary">{servings} personnes</span>
+						<button onclick={() => updateServings(servings + 1)} class="rounded-full bg-primary/20 p-2 text-primary"
+										aria-label="Ajouter un couvert">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
+									 fill="currentColor">
+								<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+							</svg>
+						</button>
+					</div>
 				</div>
-				<div class="flex items-center justify-center gap-6 rounded-full bg-primary/10 p-2">
-					<button onclick={() => updateServings(servings - 1)} class="rounded-full bg-primary/20 p-2 text-primary"
-									aria-label="Retirer un couvert">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-							<path d="M200-440v-80h560v80H200Z" />
-						</svg>
-					</button>
-					<span class="text-lg font-bold text-primary">{servings} personnes</span>
-					<button onclick={() => updateServings(servings + 1)} class="rounded-full bg-primary/20 p-2 text-primary"
-									aria-label="Ajouter un couvert">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-							<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-						</svg>
-					</button>
-				</div>
-				<ul class="flex-grow space-y-4 overflow-y-auto p-6">
+				<ul class="flex-grow space-y-4 p-6">
 					{#each sortedIngredients as ingredient (ingredient.id)}
 						<li class="flex items-center gap-4">
 							<span class="font-semibold text-on-surface">{ingredient.name}</span>
