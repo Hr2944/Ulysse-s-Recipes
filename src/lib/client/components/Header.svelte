@@ -32,8 +32,8 @@
 				</div>
 				<input
 					bind:value={q}
-					class="w-full rounded-full border-2 border-transparent bg-black/5 py-3 pl-12 pr-4 text-on-surface transition-all duration-300
-                 placeholder:text-on-surface/50 focus:border-primary focus:bg-white focus:outline-none focus:ring-0 hover:shadow-inner"
+					class="w-full rounded-full border-2 border-transparent bg-black/5 py-3 pl-12 pr-4 text-on-surface shadow-sm transition-all duration-300
+                 placeholder:text-on-surface/50 focus:border-primary/20 focus:bg-white focus:outline-none focus:shadow-md hover:bg-black/10"
 					name="q"
 					onfocusin={() => focused = true}
 					onfocusout={() => focused = false}

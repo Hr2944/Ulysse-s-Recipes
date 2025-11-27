@@ -8,7 +8,7 @@
 	let { children } = $props();
 </script>
 
-<div class="min-h-screen bg-background text-text font-family-body flex flex-col">
+<div class="min-h-screen bg-background text-text font-sans flex flex-col">
 
 	<div class="max-sm:hidden">
 		<Header />

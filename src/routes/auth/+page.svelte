@@ -2,6 +2,7 @@
 	import { fade, slide } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import type { PageProps } from './$types';
+	import TextInput from '$lib/client/components/input/TextInput.svelte';
 
 	let { form }: PageProps = $props();
 
@@ -46,21 +47,7 @@
 					await update();
 				};
 				}}>
-				<div class="group relative">
-					<input
-						name="email"
-						type="email"
-						id="email-login"
-						class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-primary focus:outline-none"
-						placeholder="email"
-					/>
-					<label
-						for="email-login"
-						class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-primary
-                  peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-lg peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:text-xs">
-						Adresse e-mail
-					</label>
-				</div>
+				<TextInput name="email" type="email" label="Adresse e-mail" />
 
 				<button
 					disabled={isSubmitting}
@@ -74,25 +61,8 @@
 
 		{:else}
 			<form method="POST" action="?/signup" use:enhance in:fade={{ duration: 200, delay: 100 }} class="space-y-6">
-				<div class="group relative">
-					<input type="email" id="email-register" name="email"
-								 class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-primary focus:outline-none"
-								 placeholder="email" />
-					<label for="email-register"
-								 class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-primary peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-lg peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:text-xs">
-						Adresse e-mail
-					</label>
-				</div>
-
-				<div class="group relative">
-					<input type="text" id="username" name="username"
-								 class="peer w-full rounded-t-lg border-b-2 border-on-surface/30 bg-black/5 p-4 text-lg text-on-surface transition placeholder:text-transparent focus:border-primary focus:outline-none"
-								 placeholder="username" />
-					<label for="username"
-								 class="pointer-events-none absolute left-4 top-4 text-lg text-on-surface/60 transition-all group-focus-within:-translate-y-4 group-focus-within:text-xs group-focus-within:text-primary peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-lg peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:text-xs">
-						Pseudonyme
-					</label>
-				</div>
+				<TextInput name="email" type="email" label="Adresse e-mail" />
+				<TextInput name="username" type="text" label="Pseudonyme" />
 
 				<button
 					type="submit"
@@ -104,7 +74,7 @@
 
 		{#if form && !isSubmitting}
 			{#if form.success}
-				<p transition:slide class="text-lg mt-3 text-center text-green-800 font-bold">Vous avez reçu un lien de
+				<p transition:slide class="text-lg mt-3 text-center text-primary font-bold">Vous avez reçu un lien de
 					connexion par email !</p>
 			{:else}
 				<p transition:slide class="text-lg mt-3 text-center text-red-800 font-bold">Une erreur s'est produite, veuillez

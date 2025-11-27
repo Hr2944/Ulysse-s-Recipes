@@ -23,6 +23,6 @@
 			{/each}
 		</div>
 	{:else}
-		<p class="text-center text-gray-500">Aucune recette à afficher pour le moment.</p>
+		<p class="text-center text-on-surface/60">Aucune recette à afficher pour le moment.</p>
 	{/if}
 </section>

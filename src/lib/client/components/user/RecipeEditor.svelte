@@ -42,18 +42,18 @@
 
 	let { recipe, errorMessage, errorsListMessages }: Props = $props();
 
-	let title = $derived(recipe.title);
-	let description = $derived(recipe.description);
-	let prep_time_minutes = $derived(recipe.prep_time_minutes);
-	let cook_time_minutes = $derived(recipe.cook_time_minutes);
-	let servings = $derived(recipe.servings);
-	let difficulty = $derived(recipe.difficulty || 'facile');
-	let type = $derived(recipe.type || 'plat');
-	let status = $derived(recipe.status || 'draft');
-	let cost = $derived(recipe.cost || 'bon marché');
-	let is_vegetarian = $derived(recipe.is_vegetarian || false);
-	let is_vegan = $derived(recipe.is_vegan || false);
-	let cover_image_url = $derived(recipe.cover_image_url);
+	let title = $state(recipe.title ?? '');
+	let description = $state(recipe.description ?? '');
+	let prep_time_minutes = $state(recipe.prep_time_minutes);
+	let cook_time_minutes = $state(recipe.cook_time_minutes);
+	let servings = $state(recipe.servings);
+	let difficulty = $state(recipe.difficulty || 'facile');
+	let type = $state(recipe.type || 'plat');
+	let status = $state(recipe.status || 'draft');
+	let cost = $state(recipe.cost || 'bon marché');
+	let is_vegetarian = $state(recipe.is_vegetarian || false);
+	let is_vegan = $state(recipe.is_vegan || false);
+	let cover_image_url = $state(recipe.cover_image_url);
 
 	let ingredients = $state(recipe.ingredients);
 	let ingredientsJson = $derived(JSON.stringify(ingredients));

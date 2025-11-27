@@ -54,7 +54,7 @@
 </script>
 
 <form aria-busy={isFiltering} onsubmit={handleFilter}>
-	<fieldset class="rounded-3xl bg-surface shadow-sm border border-primary/10 p-6 md:p-8" disabled={isFiltering}>
+	<fieldset class="rounded-[2.5rem] bg-white shadow-xl shadow-primary/5 border border-primary/5 p-6 md:p-10 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10" disabled={isFiltering}>
 
 		<div class="mb-8">
 			<TextInput bind:value={q} label="Mots-clés (ex: tarte, chocolat...)" name="q" type="search"></TextInput>

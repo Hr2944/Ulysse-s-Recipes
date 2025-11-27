@@ -7,7 +7,7 @@
 <label class="flex cursor-pointer items-center gap-3 text-base" for={id}>
 	<span class="relative flex h-6 w-6 items-center justify-center">
 			<input bind:checked={checked}
-						 class="peer cursor-pointer h-full w-full shrink-0 appearance-none rounded-md border-2 border-primary transition-colors checked:border-0 checked:bg-primary disabled:cursor-not-allowed"
+						 class="peer cursor-pointer h-full w-full shrink-0 appearance-none rounded-lg border-2 border-primary transition-all checked:border-0 checked:bg-primary checked:scale-105 active:scale-95 disabled:cursor-not-allowed"
 						 id={id}
 						 name={name}
 						 type="checkbox"

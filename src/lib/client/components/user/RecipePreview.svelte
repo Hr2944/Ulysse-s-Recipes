@@ -14,10 +14,10 @@
 </script>
 
 <article
-	class="group flex h-full flex-col overflow-hidden rounded-3xl border border-primary/10 bg-surface shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+	class="group flex h-full flex-col overflow-hidden rounded-3xl bg-surface shadow-lg shadow-primary/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10"
 	in:fade={{ duration: 250 }}
 >
-	<div class="relative aspect-video w-full overflow-hidden flex items-center justify-center bg-primary/5">
+	<div class="relative aspect-[4/3] w-full overflow-hidden flex items-center justify-center bg-primary/5">
 		{#if recipe.cover_image_url}
 			<img
 				alt={`Image de la recette : ${recipe.title}`}
@@ -34,28 +34,28 @@
 		<!-- Status Badge Overlay -->
 		<div class="absolute top-3 right-3">
 			{#if recipe.status === 'published'}
-				<span class="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-green-700 shadow-sm backdrop-blur-sm">
+				<span class="rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-primary shadow-sm backdrop-blur-md border border-primary/10">
           Publiée
         </span>
 			{:else}
-				<span class="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-gray-600 shadow-sm backdrop-blur-sm">
+				<span class="rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-on-surface/60 shadow-sm backdrop-blur-md border border-primary/10">
           Brouillon
         </span>
 			{/if}
 		</div>
 	</div>
 
-	<div class="flex flex-grow flex-col p-5">
+	<div class="flex flex-grow flex-col p-6">
 		<div class="flex items-start justify-between gap-4">
-			<h2 class="flex-grow font-serif text-xl font-bold text-on-surface transition-colors group-hover:text-primary">
+			<h2 class="flex-grow font-serif text-xl font-bold text-on-surface transition-colors group-hover:text-primary line-clamp-2">
 				{recipe.title}
 			</h2>
 		</div>
 	</div>
 
-	<div class="grid grid-cols-2 border-t border-primary/10 divide-x divide-primary/10">
+	<div class="grid grid-cols-2 border-t border-primary/5 divide-x divide-primary/5 bg-white/50">
 		<a
-			class="flex items-center justify-center gap-2 p-4 font-bold text-primary transition-colors hover:bg-primary/10"
+			class="flex items-center justify-center gap-2 p-4 font-bold text-primary transition-colors hover:bg-primary/10 hover:text-primary-700"
 			href={`/user/recipe/${recipe.id}/edit`}>
 			<svg fill="currentColor" height="20" viewBox="0 -960 960 960" width="20" xmlns="http://www.w3.org/2000/svg">
 				<path
@@ -64,10 +64,10 @@
 			<span>Modifier</span>
 		</a>
 
-		<form action="?/deleteRecipe" method="POST">
+		<form action="?/deleteRecipe" method="POST" class="w-full">
 			<input name="recipeId" type="hidden" value={recipe.id} />
 			<button
-				class="flex w-full items-center justify-center gap-2 p-4 font-bold text-red-600 transition-colors hover:bg-red-500/10"
+				class="flex w-full items-center justify-center gap-2 p-4 font-bold text-red-600 transition-colors hover:bg-red-500/10 hover:text-red-700"
 				type="submit">
 				<svg fill="currentColor" height="20" viewBox="0 -960 960 960" width="20" xmlns="http://www.w3.org/2000/svg">
 					<path
