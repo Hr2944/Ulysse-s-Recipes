@@ -12,7 +12,7 @@
 	</h1>
 
 	{#if data.recipes && data.recipes.length > 0}
-		<div class="mx-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+		<div class="mx-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
 			{#each data.recipes as recipe, i}
 				<div in:fly={{ y: 20, duration: 400, delay: i * 100 }}>
 					<RecipeCard {recipe} />

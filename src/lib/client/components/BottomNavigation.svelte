@@ -1,16 +1,11 @@
-<script lang="ts">
-	import { page } from '$app/state';
-
-	let focused = $state(false);
-
-	let q = $derived(page.url.searchParams.get('q') ?? '');
+<script>
 </script>
-
 <header
-	class="fixed top-0 z-50 w-full backdrop-blur-md transition-all duration-300 bg-surface/80 shadow-sm">
+	class="fixed bottom-0 z-50 w-full backdrop-blur-md transition-all duration-300 bg-surface/80 shadow-sm">
 	<nav
 		class="mx-auto flex max-w-7xl items-center justify-between gap-4 p-4 transition-all duration-300"
 	>
+
 
 		<a class="flex items-center gap-2 transition-transform duration-300 hover:-translate-y-0.5" href="/">
 			<enhanced:img alt="Logo" class="aspect-square w-12 h-12" src="/src/lib/assets/logo.png"></enhanced:img>
@@ -20,28 +15,6 @@
 				Ulysse's Recipes
 			</span>
 		</a>
-
-		<div class="flex-grow">
-			<form action="/search" class="relative mx-auto max-w-lg transition-all duration-300" method="GET">
-				<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-					<svg class="h-6 w-6 fill-on-surface/50 transition-colors duration-300" class:fill-primart={focused}
-							 viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
-						<path
-							d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
-					</svg>
-				</div>
-				<input
-					bind:value={q}
-					class="w-full rounded-full border-2 border-transparent bg-black/5 py-3 pl-12 pr-4 text-on-surface transition-all duration-300
-                 placeholder:text-on-surface/50 focus:border-primart focus:bg-white focus:outline-none focus:ring-0 hover:shadow-inner"
-					name="q"
-					onfocusin={() => focused = true}
-					onfocusout={() => focused = false}
-					placeholder="Chercher une recette..."
-					type="search"
-				/>
-			</form>
-		</div>
 
 		<div>
 			<a aria-label="Mon compte"
