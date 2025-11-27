@@ -84,13 +84,13 @@
 </svelte:head>
 
 <div class="relative min-h-screen bg-surface">
-	<header class="max-h-[60vh] w-full bg-primary/10 overflow-hidden">
+	<header class="w-full bg-primary/10 overflow-hidden {recipe.cover_image_url ? 'h-[40vh] md:h-[60vh]' : 'hidden'}">
 		{#if recipe.cover_image_url}
 			<img src={recipe.cover_image_url} alt={recipe.title} class="h-full w-full object-cover" />
 		{/if}
 	</header>
 
-	<main class="relative z-10 -mt-16 rounded-t-3xl bg-surface p-6 pb-24">
+	<main class="relative z-10 -mt-16 rounded-t-3xl bg-surface p-6 pb-32 sm:pb-24">
 		<section class="text-center">
 			<h1 class="font-serif text-4xl font-bold text-primary md:text-5xl">{recipe.title}</h1>
 			<div class="mt-2 flex items-center justify-center gap-1 text-yellow-500">
@@ -237,7 +237,7 @@
 		</div>
 	{/if}
 
-	<div class="fixed z-20 inset-x-0 bottom-0 p-4 flex items-center justify-center md:justify-end pointer-events-none">
+	<div class="fixed z-20 inset-x-0 bottom-16 sm:bottom-0 p-4 flex items-center justify-center md:justify-end pointer-events-none transition-all duration-300">
 		<button
 			class="pointer-events-auto flex w-full max-w-lg items-center justify-center gap-2 rounded-full bg-primary px-16 py-4 font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-100"
 			onclick={() => (isIngredientsSheetOpen = true)}

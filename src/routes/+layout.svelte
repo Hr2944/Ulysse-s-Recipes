@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Header from '$lib/client/components/Header.svelte';
 	import Footer from '$lib/client/components/Footer.svelte';
+	import MobileHeader from '$lib/client/components/MobileHeader.svelte';
 	import '../app.css';
 	import BottomNavigation from '$lib/client/components/BottomNavigation.svelte';
 
@@ -13,14 +14,15 @@
 		<Header />
 	</div>
 	<div class="max-sm:block hidden">
-		<BottomNavigation></BottomNavigation>
+		<MobileHeader />
+		<BottomNavigation />
 	</div>
 
-	<div class="min-h-screen sm:mt-20">
+	<div class="min-h-screen mt-16 sm:mt-20">
 		{@render children()}
 	</div>
 
-	<div class="max-sm:mb-20">
+	<div class="max-sm:mb-24">
 		<Footer />
 	</div>
 </div>

@@ -1,15 +1,18 @@
 <script lang="ts">
 	import RecipeCard from '$lib/client/components/RecipeCard.svelte';
+	import Hero from '$lib/client/components/Hero.svelte';
 	import type { PageData } from './$types';
 	import { fly } from 'svelte/transition';
 
 	let { data }: { data: PageData } = $props();
 </script>
 
-<section>
-	<h1 class="mt-6 text-3xl md:text-5xl font-bold text-center font-family-headings text-primary mb-8 md:mb-12">
+<Hero />
+
+<section class="max-w-7xl mx-auto px-4 pb-16">
+	<h2 class="text-3xl font-serif font-bold text-primary mb-8 md:mb-12 pl-2 border-l-4 border-secondary">
 		Les dernières recettes
-	</h1>
+	</h2>
 
 	{#if data.recipes && data.recipes.length > 0}
 		<div class="mx-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

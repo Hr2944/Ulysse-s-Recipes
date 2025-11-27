@@ -54,92 +54,82 @@
 </script>
 
 <form aria-busy={isFiltering} onsubmit={handleFilter}>
-	<fieldset class="rounded-2xl border border-primary/10 bg-surface p-6" disabled={isFiltering}>
+	<fieldset class="rounded-3xl bg-surface shadow-sm border border-primary/10 p-6 md:p-8" disabled={isFiltering}>
 
-		<div class="w-full">
-			<TextInput bind:value={q} label="Rechercher parmi les recettes..." name="q" type="search"></TextInput>
+		<div class="mb-8">
+			<TextInput bind:value={q} label="Mots-clés (ex: tarte, chocolat...)" name="q" type="search"></TextInput>
 		</div>
 
-		<div class="flex flex-wrap gap-x-6 gap-y-3 my-3">
-			<div class="flex-10 basis-0 min-w-xs">
-				<Dropdown bind:value={sort} label="Trier par">
-					<option value="relevance">Pertinence</option>
-					<option value="newest">Les plus récents</option>
-					<option value="rating">Les mieux notés</option>
-					<option value="time_asc">Temps total croissant</option>
-				</Dropdown>
-			</div>
+		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+			<Dropdown bind:value={sort} label="Trier par">
+				<option value="relevance">Pertinence</option>
+				<option value="newest">Les plus récents</option>
+				<option value="rating">Les mieux notés</option>
+				<option value="time_asc">Temps total croissant</option>
+			</Dropdown>
 
+			<Dropdown bind:value={type} label="Type de recette">
+				<option value="all">Tous types</option>
+				<option value="entrée">Entrée</option>
+				<option value="plat">Plat</option>
+				<option value="dessert">Dessert</option>
+				<option value="boisson">Boisson</option>
+			</Dropdown>
 
-			<div class="flex-10 basis-0 min-w-xs">
-				<Dropdown bind:value={type} label="Type de recette">
-					<option value="all">Tous types</option>
-					<option value="entree">Entrée</option>
-					<option value="plat">Plat</option>
-					<option value="dessert">Dessert</option>
-					<option value="boisson">Boisson</option>
-				</Dropdown>
-			</div>
+			<Dropdown bind:value={difficulty} label="Difficulté">
+				<option value="all">Toutes difficultés</option>
+				<option value="facile">Facile</option>
+				<option value="moyen">Moyen</option>
+				<option value="difficile">Difficile</option>
+			</Dropdown>
 
-
-			<div class="flex-10 basis-0 min-w-xs">
-				<Dropdown bind:value={difficulty} label="Difficulté">
-					<option value="all">Toutes difficultés</option>
-					<option value="facile">Facile</option>
-					<option value="moyen">Moyen</option>
-					<option value="difficile">Difficile</option>
-				</Dropdown>
-			</div>
-
-			<div class="flex-10 basis-0 min-w-xs">
-				<Dropdown bind:value={total_time} label="Temps total">
-					<option value="all">Indifférent</option>
-					<option value="lt_30">Moins de 30 min</option>
-					<option value="30_60">30 à 60 min</option>
-					<option value="gt_60">Plus de 60 min</option>
-				</Dropdown>
-			</div>
+			<Dropdown bind:value={total_time} label="Temps total">
+				<option value="all">Indifférent</option>
+				<option value="lt_30">Moins de 30 min</option>
+				<option value="30_60">30 à 60 min</option>
+				<option value="gt_60">Plus de 60 min</option>
+			</Dropdown>
 
 			{#if context === 'user'}
-				<div class="flex-10 basis-0">
-					<Dropdown bind:value={status} label="Statut">
-						<option value="all">Tous</option>
-						<option value="published">Publiée</option>
-						<option value="draft">Brouillon</option>
-					</Dropdown>
-				</div>
+				<Dropdown bind:value={status} label="Statut">
+					<option value="all">Tous</option>
+					<option value="published">Publiée</option>
+					<option value="draft">Brouillon</option>
+				</Dropdown>
 			{/if}
 		</div>
 
-		<fieldset class="mt-3">
-			<legend class="mb-2 text-base font-medium text-on-surface">Régimes spécifiques</legend>
-			<div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+		<div class="mt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+			<div class="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-2xl bg-primary/5 px-6 py-4 w-full md:w-auto">
+				<span class="text-sm font-bold text-primary uppercase tracking-wide">Régimes</span>
+				<div class="h-4 w-px bg-primary/20 hidden sm:block"></div>
 				<Checkbox bind:checked={is_vegetarian} label="Végétarien"></Checkbox>
 				<Checkbox bind:checked={is_vegan} label="Végan"></Checkbox>
 			</div>
-		</fieldset>
 
-		<div class="flex items-center gap-4 mt-6">
-			<button
-				class="flex min-w-[200px] items-center justify-center rounded-full bg-primary px-6 py-3 font-bold text-on-primary shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 disabled:cursor-wait disabled:opacity-70"
-				type="submit">
-				{#if isFiltering}
-					<svg class="mr-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-						<path class="opacity-75" fill="currentColor"
-									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-					</svg>
-					<span>Filtrage...</span>
-				{:else}
-					<span>Appliquer les filtres</span>
-				{/if}
-			</button>
-			<button
-				class="rounded-full px-4 py-3 font-bold text-primary transition-colors hover:bg-primary/10 disabled:cursor-wait disabled:opacity-70"
-				onclick={handleReset}
-				type="button">
-				Réinitialiser
-			</button>
+			<div class="flex w-full md:w-auto items-center gap-4">
+				<button
+					class="flex-1 md:flex-none flex min-w-[160px] items-center justify-center rounded-full bg-primary px-8 py-3.5 font-bold text-on-primary shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 disabled:cursor-wait disabled:opacity-70"
+					type="submit">
+					{#if isFiltering}
+						<svg class="mr-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor"
+										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
+						<span>...</span>
+					{:else}
+						<span>Appliquer</span>
+					{/if}
+				</button>
+				<button
+					class="rounded-full px-6 py-3.5 font-bold text-primary transition-colors hover:bg-primary/10 disabled:cursor-wait disabled:opacity-70"
+					onclick={handleReset}
+					type="button">
+					Réinitialiser
+				</button>
+			</div>
 		</div>
+
 	</fieldset>
 </form>

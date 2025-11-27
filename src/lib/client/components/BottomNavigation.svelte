@@ -1,31 +1,58 @@
-<script>
+<script lang="ts">
+	import { page } from '$app/state';
+
+    // Determine if the current path matches the link
+	let path = $derived(page.url.pathname);
+
+    function isActive(href: string, currentPath: string) {
+        if (href === '/') return currentPath === '/';
+        return currentPath.startsWith(href);
+    }
 </script>
-<header
-	class="fixed bottom-0 z-50 w-full backdrop-blur-md transition-all duration-300 bg-surface/80 shadow-sm">
-	<nav
-		class="mx-auto flex max-w-7xl items-center justify-between gap-4 p-4 transition-all duration-300"
-	>
 
+<nav class="fixed bottom-0 z-50 w-full bg-surface/90 backdrop-blur-md border-t border-primary/10 pb-safe">
+    <div class="grid h-16 grid-cols-3 mx-auto max-w-md">
+        <a
+            href="/"
+            class="inline-flex flex-col items-center justify-center px-5 hover:bg-primary/5 transition-colors group"
+            class:text-primary={isActive('/', path)}
+            class:text-on-surface={!isActive('/', path)}
+        >
+            <svg class="w-6 h-6 mb-1 transition-colors group-hover:text-primary" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/>
+            </svg>
+            <span class="text-xs font-medium transition-colors group-hover:text-primary">Accueil</span>
+        </a>
 
-		<a class="flex items-center gap-2 transition-transform duration-300 hover:-translate-y-0.5" href="/">
-			<enhanced:img alt="Logo" class="aspect-square w-12 h-12" src="/src/lib/assets/logo.png"></enhanced:img>
-			<span
-				class="hidden font-serif font-bold text-primary transition-all duration-300 sm:inline sm:text-2xl"
-			>
-				Ulysse's Recipes
-			</span>
-		</a>
+        <a
+            href="/search"
+            class="inline-flex flex-col items-center justify-center px-5 hover:bg-primary/5 transition-colors group"
+            class:text-primary={isActive('/search', path)}
+            class:text-on-surface={!isActive('/search', path)}
+        >
+            <svg class="w-6 h-6 mb-1 transition-colors group-hover:text-primary" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                 <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+            </svg>
+            <span class="text-xs font-medium transition-colors group-hover:text-primary">Recherche</span>
+        </a>
 
-		<div>
-			<a aria-label="Mon compte"
-				 class="flex items-center justify-center rounded-full border-2 border-primary p-2.5 text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/10 active:scale-95"
-				 href="/auth">
-				<svg class="h-6 w-6 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
-					<path
-						d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
-				</svg>
-			</a>
-		</div>
+        <a
+            href="/auth"
+            class="inline-flex flex-col items-center justify-center px-5 hover:bg-primary/5 transition-colors group"
+            class:text-primary={isActive('/auth', path)}
+            class:text-on-surface={!isActive('/auth', path)}
+        >
+            <svg class="w-6 h-6 mb-1 transition-colors group-hover:text-primary" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z" />
+            </svg>
+            <span class="text-xs font-medium transition-colors group-hover:text-primary">Compte</span>
+        </a>
+    </div>
+</nav>
 
-	</nav>
-</header>
+<style>
+    /* Safe area for mobile devices with home indicator */
+    .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+</style>

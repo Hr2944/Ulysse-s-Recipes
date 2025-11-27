@@ -22,20 +22,20 @@
 			</p>
 		</div>
 
-		<!--		<div class="my-10 grid grid-cols-2 gap-2 rounded-full bg-surface p-1 shadow-inner">-->
-		<!--			<button-->
-		<!--				class="rounded-full p-3 text-base font-bold transition-all duration-300-->
-		<!--              {activeTab === 'connexion' ? 'bg-primary text-on-primary shadow-md' : 'text-primary/70 hover:bg-primary/10'}"-->
-		<!--				onclick={() => activeTab = 'connexion'}>-->
-		<!--				Connexion-->
-		<!--			</button>-->
-		<!--			<button-->
-		<!--				class="rounded-full p-3 text-base font-bold transition-all duration-300-->
-		<!--              {activeTab === 'inscription' ? 'bg-primary text-on-primary shadow-md' : 'text-primary/70 hover:bg-primary/10'}"-->
-		<!--				onclick={() => activeTab = 'inscription'}>-->
-		<!--				Inscription-->
-		<!--			</button>-->
-		<!--		</div>-->
+		<div class="my-8 flex rounded-full bg-primary/5 p-1">
+			<button
+				class="flex-1 rounded-full py-3 text-sm font-bold transition-all duration-300
+              {activeTab === 'connexion' ? 'bg-white text-primary shadow-sm' : 'text-on-surface/60 hover:bg-primary/10'}"
+				onclick={() => activeTab = 'connexion'}>
+				Connexion
+			</button>
+			<button
+				class="flex-1 rounded-full py-3 text-sm font-bold transition-all duration-300
+              {activeTab === 'inscription' ? 'bg-white text-primary shadow-sm' : 'text-on-surface/60 hover:bg-primary/10'}"
+				onclick={() => activeTab = 'inscription'}>
+				Inscription
+			</button>
+		</div>
 
 		{#if activeTab === 'connexion'}
 			<form method="POST" action="?/login" in:fade={{ duration: 200, delay: 100 }} class="space-y-6 mt-10" use:enhance={() => {
