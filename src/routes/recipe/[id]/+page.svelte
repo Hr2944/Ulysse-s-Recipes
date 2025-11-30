@@ -90,17 +90,18 @@
 		{/if}
 	</header>
 
-	<main class="relative z-10 -mt-16 rounded-t-3xl bg-surface p-6 pb-32 sm:pb-24">
-		<section class="text-center">
-			<h1 class="font-serif text-4xl font-bold text-primary md:text-5xl">{recipe.title}</h1>
-			<div class="mt-2 flex items-center justify-center gap-1 text-yellow-500">
-				<span>{recipe.average_rating.toFixed(1)}</span>
-				<svg class="h-8 w-8 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
-					<path
-						d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z" />
-				</svg>
-			</div>
-		</section>
+	<main class="relative z-10 -mt-16 rounded-t-3xl bg-surface p-6">
+		<!--		Rating Section-->
+		<!--		<section class="text-center">-->
+		<!--			<h1 class="font-serif text-4xl font-bold text-primary md:text-5xl">{recipe.title}</h1>-->
+		<!--			<div class="mt-2 flex items-center justify-center gap-1 text-yellow-500">-->
+		<!--				<span>{recipe.average_rating.toFixed(1)}</span>-->
+		<!--				<svg class="h-8 w-8 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">-->
+		<!--					<path-->
+		<!--						d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z" />-->
+		<!--				</svg>-->
+		<!--			</div>-->
+		<!--		</section>-->
 
 		<section class="mt-8 grid grid-cols-2 gap-4 rounded-2xl bg-primary/5 p-4 text-center md:grid-cols-4">
 			<div class="flex flex-col items-center">
@@ -151,25 +152,27 @@
 			{/if}
 		</section>
 
-		<section class="mt-8 prose max-w-none">
-			<h2 class="mb-6 font-serif text-3xl font-bold text-primary">Description</h2>
-			<p class="text-lg">{@html recipe.description}</p>
-		</section>
+		{#if recipe.description}
+			<section class="mt-8 prose max-w-none">
+				<h2 class="mb-6 font-serif text-3xl font-bold text-primary">Description</h2>
+				<p class="text-lg">{@html recipe.description}</p>
+			</section>
+		{/if}
 
 		<!-- Steps -->
 		<section class="mt-12">
 			<h2 class="mb-8 font-serif text-3xl font-bold text-primary">Préparation</h2>
-			<ol class="relative border-l-2 border-primary/10 ml-3 md:ml-4 space-y-8 pb-8">
+			<ol class="relative border-l-2 border-primary/10 ml-3 md:ml-4 space-y-8">
 				{#each sortedSteps as step (step.id)}
 					<li
-						class="relative pl-8 md:pl-12 transition-all duration-500"
-						class:opacity-50={checkedSteps.has(step.step_number)}
-						class:grayscale={checkedSteps.has(step.step_number)}
+						class="relative pl-8 md:pl-12 duration-500"
 					>
 						<span
-							class="absolute -left-[0.4rem] top-6 h-4 w-4 rounded-full ring-4 ring-white transition-colors duration-300 {checkedSteps.has(step.step_number) ? 'bg-primary' : 'bg-primary/20'}"
+							class="absolute -left-[0.55rem] top-6 h-4 w-4 rounded-full ring-4 ring-white transition-colors duration-300 {checkedSteps.has(step.step_number) ? 'bg-primary' : 'bg-gray-200'}"
 						></span>
-						<div class="flex flex-col gap-3 rounded-3xl p-6 bg-white shadow-sm shadow-primary/5 border border-primary/5 hover:shadow-md transition-all duration-300">
+						<div
+							class:opacity-60={checkedSteps.has(step.step_number)}
+							class="flex flex-col gap-3 rounded-3xl p-6 bg-white shadow-sm shadow-primary/5 border border-primary/5 hover:shadow-md transition-all duration-300">
 							<div class="flex items-center justify-between border-b border-primary/5 pb-3">
 								<span class="font-bold text-primary uppercase tracking-wider text-xs">Étape {step.step_number}</span>
 								<Checkbox onchange={() => toggleStep(step.step_number)} label="Terminée"></Checkbox>
@@ -206,27 +209,31 @@
 							</svg>
 						</button>
 					</div>
-			<div class="flex items-center justify-center gap-4 rounded-full bg-white border border-primary/10 p-1.5 shadow-sm mx-auto max-w-xs">
-						<button onclick={() => updateServings(servings - 1)} class="rounded-full bg-primary/5 p-3 text-primary hover:bg-primary hover:text-white transition-all disabled:opacity-50"
-										aria-label="Retirer un couvert" disabled={servings <= 1}>
-							<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
-									 fill="currentColor">
-								<path d="M200-440v-80h560v80H200Z" />
-							</svg>
-						</button>
-						<div class="flex flex-col items-center w-24">
-                            <span class="text-xl font-bold text-primary leading-none">{servings}</span>
-                            <span class="text-[10px] uppercase tracking-wider text-primary/60 font-bold">Personnes</span>
-                        </div>
-						<button onclick={() => updateServings(servings + 1)} class="rounded-full bg-primary/5 p-3 text-primary hover:bg-primary hover:text-white transition-all"
-										aria-label="Ajouter un couvert">
-							<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
-									 fill="currentColor">
-								<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-							</svg>
-						</button>
-					</div>
 				</div>
+				<div
+					class="flex items-center justify-center gap-4 rounded-full bg-white border border-primary/10 p-1.5 shadow-sm mx-auto w-10/12 max-w-xs">
+					<button onclick={() => updateServings(servings - 1)}
+									class="rounded-full bg-primary/5 p-3 text-primary hover:bg-primary hover:text-white transition-colors transition-300 disabled:opacity-50"
+									aria-label="Retirer un couvert" disabled={servings <= 1}>
+						<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
+								 fill="currentColor">
+							<path d="M200-440v-80h560v80H200Z" />
+						</svg>
+					</button>
+					<div class="flex flex-col items-center w-24">
+						<span class="text-xl font-bold text-primary leading-none">{servings}</span>
+						<span class="text-[10px] uppercase tracking-wider text-primary/60 font-bold">Personnes</span>
+					</div>
+					<button onclick={() => updateServings(servings + 1)}
+									class="rounded-full bg-primary/5 p-3 text-primary hover:bg-primary hover:text-white transition-colors transition-300"
+									aria-label="Ajouter un couvert">
+						<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
+								 fill="currentColor">
+							<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+						</svg>
+					</button>
+				</div>
+
 				<ul class="flex-grow space-y-3 p-6">
 					{#each sortedIngredients as ingredient (ingredient.id)}
 						<li class="flex items-center justify-between p-4 rounded-2xl bg-surface border border-primary/5 shadow-sm">
@@ -241,7 +248,8 @@
 		</div>
 	{/if}
 
-	<div class="fixed z-20 inset-x-0 bottom-16 sm:bottom-0 p-4 flex items-center justify-center md:justify-end pointer-events-none transition-all duration-300">
+	<div
+		class="fixed z-20 inset-x-0 bottom-16 sm:bottom-0 p-4 flex items-center justify-center md:justify-end pointer-events-none transition-all duration-300">
 		<button
 			class="pointer-events-auto flex w-full max-w-lg items-center justify-center gap-2 rounded-full bg-primary px-16 py-4 font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-100"
 			onclick={() => (isIngredientsSheetOpen = true)}
@@ -250,7 +258,7 @@
 				<path
 					d="M640-80q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170T640-80Zm0-80q66 0 113-47t47-113q0-66-47-113t-113-47q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-480 0q-33 0-56.5-23.5T80-240v-304q0-8 1.5-16t4.5-16l80-184h-6q-17 0-28.5-11.5T120-800v-40q0-17 11.5-28.5T160-880h280q17 0 28.5 11.5T480-840v40q0 17-11.5 28.5T440-760h-6l66 152q-19 10-36 21t-32 25l-84-198h-96l-92 216v304h170q5 21 13.5 41.5T364-160H160Zm480-440q-42 0-71-29t-29-71q0-42 29-71t71-29v200q0-42 29-71t71-29q42 0 71 29t29 71H640Z" />
 			</svg>
-			Voir les ingrédients
+			Ingrédients
 		</button>
 	</div>
 </div>

@@ -107,7 +107,7 @@
 				<Checkbox bind:checked={is_vegan} label="Végan"></Checkbox>
 			</div>
 
-			<div class="flex w-full md:w-auto items-center gap-4">
+			<div class="flex flex-wrap w-full md:w-auto items-center justify-center gap-4">
 				<button
 					class="flex-1 md:flex-none flex min-w-[160px] items-center justify-center rounded-full bg-primary px-8 py-3.5 font-bold text-on-primary shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 disabled:cursor-wait disabled:opacity-70"
 					type="submit">
@@ -123,7 +123,7 @@
 					{/if}
 				</button>
 				<button
-					class="rounded-full px-6 py-3.5 font-bold text-primary transition-colors hover:bg-primary/10 disabled:cursor-wait disabled:opacity-70"
+					class="justify-center rounded-full px-6 py-3.5 font-bold text-primary transition-colors hover:bg-primary/10 disabled:cursor-wait disabled:opacity-70"
 					onclick={handleReset}
 					type="button">
 					Réinitialiser

@@ -9,7 +9,7 @@
 
 <Hero />
 
-<section class="max-w-7xl mx-auto px-4 pb-16">
+<section class="max-w-7xl mx-auto px-4 pb-16" id="latest-recipes">
 	<h2 class="text-3xl font-serif font-bold text-primary mb-8 md:mb-12 pl-2 border-l-4 border-secondary">
 		Les dernières recettes
 	</h2>

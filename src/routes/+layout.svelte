@@ -8,7 +8,7 @@
 	let { children } = $props();
 </script>
 
-<div class="min-h-screen bg-background text-text font-sans flex flex-col">
+<div class="min-h-screen bg-background font-sans flex flex-col">
 
 	<div class="max-sm:hidden">
 		<Header />
@@ -18,11 +18,11 @@
 		<BottomNavigation />
 	</div>
 
-	<div class="min-h-screen mt-16 sm:mt-20">
+	<div class="min-h-screen mt-14 sm:mt-[84px]">
 		{@render children()}
 	</div>
 
-	<div class="max-sm:mb-24">
+	<div class="max-sm:mb-14">
 		<Footer />
 	</div>
 </div>
