@@ -85,8 +85,8 @@ export const actions = {
 			cost: formData.get('cost'),
 			type: formData.get('type'),
 			status: formData.get('status'),
-			is_vegetarian: formData.get('is_vegetarian') === 'on',
-			is_vegan: formData.get('is_vegan') === 'on',
+			is_vegetarian: formData.get('vegetarian') === 'on',
+			is_vegan: formData.get('vegan') === 'on',
 			ingredients: rawIngredients,
 			steps: rawSteps
 		});

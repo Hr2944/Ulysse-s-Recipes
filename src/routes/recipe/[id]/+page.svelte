@@ -26,7 +26,9 @@
 		[...recipe.steps].sort((a, b) => a.step_number - b.step_number)
 	);
 	const sortedIngredients = $derived(
-		[...dynamicIngredients].sort((a, b) => (a.order || 99) - (b.order || 99))
+		[...dynamicIngredients].sort(
+			(a, b) => cleanIngredientName(b.name).length - cleanIngredientName(a.name).length
+		)
 	);
 
 	function updateServings(newServings: number) {
@@ -42,31 +44,100 @@
 		return String(roundedQty);
 	}
 
-	function escapeRegExp(str: string): string {
-		return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	function cleanIngredientName(name: string): string {
+		const aposChars = '[\u0027\u2019]';
+
+		const elisions = [`d${aposChars}`, `l${aposChars}`];
+		const elisionRegex = new RegExp(`^(${elisions.join('|')})`, 'i');
+		let cleaned = name.replace(elisionRegex, '');
+
+		const words = [
+			'de la', 'de', 'du', 'des',
+			'le', 'la', 'les', 'un', 'une',
+			'aux', 'au', 'à la', 'à'
+		];
+		const wordRegex = new RegExp(`^(${words.join('|')})[\\s\\u00A0]+`, 'i');
+
+		return cleaned.replace(wordRegex, '').trim();
+	}
+
+	function createFuzzyRegex(ingredientName: string): RegExp {
+		const cleanedName = cleanIngredientName(ingredientName);
+
+		if (!cleanedName.trim()) return /(?!)/;
+
+		const words = cleanedName.split(/[\s\u00A0]+/);
+
+		const regexParts = words.map(word => {
+			let root = word;
+			if (word.length > 2) {
+				root = word.replace(/[eéèêë]*[sx]*$/i, '');
+			}
+
+			let pattern = '';
+			for (const char of root) {
+				pattern += getCharRegex(char);
+			}
+
+			if (word.length > 2) {
+				pattern += '(?:[eéèêë]*(?:s|x)?)?';
+			} else {
+				pattern += '(?:s|x)?';
+			}
+
+			return pattern;
+		});
+
+		const corePattern = regexParts.join('[\\s\\u00A0]+');
+
+		const aposChars = '\\u0027\\u2019';
+		const aposClass = `[${aposChars}]`;
+
+		const elisions = [`d${aposClass}`, `l${aposClass}`];
+		const elisionGroup = `(?:${elisions.join('|')})?`;
+
+		const prefixes = [
+			'de[\\s\\u00A0]+la', 'de', 'du', 'des',
+			'le', 'la', 'les', 'un', 'une',
+			'aux', 'au', 'à[\\s\\u00A0]+la', 'à'
+		];
+		const wordGroup = `(?:(?:${prefixes.join('|')})[\\s\\u00A0]+)?`;
+		const fullPrefix = `${wordGroup}${elisionGroup}`;
+
+		const boundary = `(^|[\\s\\u00A0${aposChars}"(\\[>,:;!?.\\-])`;
+
+		return new RegExp(`${boundary}(${fullPrefix}${corePattern})(?![\\w\u00C0-\u00FF])`, 'gi');
 	}
 
 	function renderStepText(description: string): string {
 		let renderedText = description;
 
-		const sortedIngredients = [...dynamicIngredients].sort(
-			(a, b) => b.name.length - a.name.length
-		);
-
 		for (const ingredient of sortedIngredients) {
-			const escapedName = escapeRegExp(ingredient.name);
+			try {
+				const regex = createFuzzyRegex(ingredient.name);
 
-			const regex = new RegExp(`\\b((?:l'|d')?${escapedName}(?:s|x)?)\\b`, 'gi');
+				renderedText = renderedText.replace(regex, (match, separator, text) => {
+					if (match.includes('text-primary')) return match;
 
-			const formattedQty = formatQuantity(ingredient.quantity);
-			const unit = ingredient.unit ? ` ${ingredient.unit}` : '';
+					const safeSeparator = separator || '';
+					const formattedQty = formatQuantity(ingredient.quantity);
+					const unit = ingredient.unit ? ` ${ingredient.unit}` : '';
 
-			const replacement = `<span class="font-bold text-primary">$1 (${formattedQty}${unit})</span>`;
-
-			renderedText = renderedText.replace(regex, replacement);
+					return `${safeSeparator}<span class="font-bold text-primary">${text} (${formattedQty}${unit})</span>`;
+				});
+			} catch (e) {
+				console.warn(`Error reg ${ingredient.name}`, e);
+			}
 		}
-
 		return renderedText;
+	}
+
+	function getCharRegex(char: string): string {
+		const accents: Record<string, string> = {
+			'a': '[aàâä]', 'e': '[eéèêë]', 'i': '[iîï]', 'o': '[oôö]', 'u': '[uùûü]',
+			'c': '[cç]', 'n': '[nñ]'
+		};
+		return accents[char.toLowerCase()] || char;
 	}
 
 	function toggleStep(stepNumber: number) {
@@ -91,17 +162,17 @@
 	</header>
 
 	<main class="relative z-10 -mt-16 rounded-t-3xl bg-surface p-6">
-		<!--		Rating Section-->
-		<!--		<section class="text-center">-->
-		<!--			<h1 class="font-serif text-4xl font-bold text-primary md:text-5xl">{recipe.title}</h1>-->
-		<!--			<div class="mt-2 flex items-center justify-center gap-1 text-yellow-500">-->
-		<!--				<span>{recipe.average_rating.toFixed(1)}</span>-->
-		<!--				<svg class="h-8 w-8 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">-->
-		<!--					<path-->
-		<!--						d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z" />-->
-		<!--				</svg>-->
-		<!--			</div>-->
-		<!--		</section>-->
+		<!--				Rating Section-->
+		<section class="text-center">
+			<h1 class="font-serif text-4xl font-bold text-primary md:text-5xl">{recipe.title}</h1>
+			<!--					<div class="mt-2 flex items-center justify-center gap-1 text-yellow-500">-->
+			<!--						<span>{recipe.average_rating.toFixed(1)}</span>-->
+			<!--						<svg class="h-8 w-8 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">-->
+			<!--							<path-->
+			<!--								d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z" />-->
+			<!--						</svg>-->
+			<!--					</div>-->
+		</section>
 
 		<section class="mt-8 grid grid-cols-2 gap-4 rounded-2xl bg-primary/5 p-4 text-center md:grid-cols-4">
 			<div class="flex flex-col items-center">

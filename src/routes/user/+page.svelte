@@ -71,7 +71,7 @@
 				Bonjour {data.username ?? ''}
 			</h1>
 			<p class="mt-2 text-lg text-on-surface/80">
-				Gérez vos créations culinaires et votre profil.
+				Gérez vos recettes et votre profil.
 			</p>
 		</div>
 

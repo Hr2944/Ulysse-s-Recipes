@@ -147,12 +147,12 @@
 			<div class="flex items-center justify-between border-b border-primary/10 pb-4">
 				<h2 class="font-serif text-3xl font-semibold text-primary">Ingrédients</h2>
 				<button
-					class="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 font-bold text-primary transition hover:bg-primary/20 active:scale-95"
+					class="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 font-bold text-primary transition-colors hover:bg-primary/20 active:scale-95"
 					onclick={addIngredient}
 					type="button"
 				>
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 -960 960 960">
-						<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+					<svg class="h-5 w-5 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
+						<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
 					</svg>
 					Ajouter
 				</button>
@@ -160,7 +160,8 @@
 			<div class="space-y-4">
 				<input bind:value={ingredientsJson} name="ingredients" type="hidden" />
 				{#each ingredients as ingredient (ingredient.id)}
-					<div transition:slide|local={{ duration: 300 }} class="relative rounded-2xl bg-surface p-4 shadow-sm border border-primary/5 sm:flex sm:items-center sm:gap-4">
+					<div transition:slide|local={{ duration: 300 }}
+							 class="relative rounded-2xl bg-surface p-4 shadow-sm border border-primary/5 sm:flex sm:items-center sm:gap-4">
 						<div class="grid grid-cols-2 gap-4 sm:flex-shrink-0 sm:w-1/3">
 							<TextInput type="number" label="Qté" bind:value={ingredient.quantity}></TextInput>
 							<TextInput label="Unité" bind:value={ingredient.unit}></TextInput>
@@ -172,7 +173,7 @@
 							aria-label="Supprimer l'ingrédient"
 							type="button"
 							onclick={() => removeIngredient(ingredient.id)}
-							class="absolute -right-2 -top-2 p-2 bg-surface rounded-full shadow-md text-red-500 hover:text-red-700 hover:bg-red-50 transition-all sm:static sm:shadow-none sm:bg-transparent"
+							class="absolute -right-2 -top-2 p-2 bg-surface rounded-full shadow-md text-red-500 hover:text-red-700 hover:bg-red-300 transition-colors sm:static sm:shadow-none sm:bg-transparent"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
 									 fill="currentColor">
@@ -183,9 +184,21 @@
 					</div>
 				{/each}
 				{#if ingredients.length === 0}
-					<div class="text-center py-8 text-on-surface/50 italic bg-primary/5 rounded-2xl border border-dashed border-primary/20">
+					<div
+						class="text-center py-8 text-on-surface/50 italic bg-primary/5 rounded-2xl border border-dashed border-primary/20">
 						Aucun ingrédient ajouté.
 					</div>
+				{:else}
+					<button
+						class="w-full flex items-center justify-center gap-2 rounded-full bg-primary p-4 font-bold text-on-primary transition-transform hover:-translate-y-0.5"
+						onclick={addIngredient}
+						type="button"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 -960 960 960">
+							<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+						</svg>
+						Ajouter Un Ingrédient
+					</button>
 				{/if}
 			</div>
 		</section>
@@ -194,12 +207,12 @@
 			<div class="flex items-center justify-between border-b border-primary/10 pb-4">
 				<h2 class="font-serif text-3xl font-semibold text-primary">Préparation</h2>
 				<button
-					class="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 font-bold text-primary transition hover:bg-primary/20 active:scale-95"
+					class="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 font-bold text-primary transition-colors hover:bg-primary/20 active:scale-95"
 					onclick={addStep}
 					type="button"
 				>
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 -960 960 960">
-						<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+					<svg class="h-5 w-5 fill-current" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
+						<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
 					</svg>
 					Ajouter
 				</button>
@@ -207,8 +220,10 @@
 			<div class="space-y-6">
 				<input bind:value={stepsJson} name="steps" type="hidden">
 				{#each steps as step, i (step.id)}
-					<div transition:slide|local={{ duration: 300 }} class="flex items-start gap-4 rounded-2xl bg-surface p-4 shadow-sm border border-primary/5">
-						<span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-on-primary font-bold">{i + 1}</span>
+					<div transition:slide|local={{ duration: 300 }}
+							 class="flex items-start gap-4 rounded-2xl bg-surface p-4 shadow-sm border border-primary/5">
+						<span
+							class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-on-primary font-bold">{i + 1}</span>
 						<div class="flex-grow">
 							<TextArea rows={3} bind:value={step.description} label="Description de l'étape"></TextArea>
 						</div>
@@ -216,7 +231,7 @@
 							aria-label="Supprimer l'étape"
 							type="button"
 							onclick={() => removeStep(step.id)}
-							class="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors p-2"
+							class="text-red-500 hover:text-red-700 hover:bg-red-300 rounded-full transition-colors p-2"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
 									 fill="currentColor">
@@ -227,9 +242,21 @@
 					</div>
 				{/each}
 				{#if steps.length === 0}
-					<div class="text-center py-8 text-on-surface/50 italic bg-primary/5 rounded-2xl border border-dashed border-primary/20">
+					<div
+						class="text-center py-8 text-on-surface/50 italic bg-primary/5 rounded-2xl border border-dashed border-primary/20">
 						Aucune étape ajoutée.
 					</div>
+				{:else}
+					<button
+						class="w-full flex items-center justify-center gap-2 rounded-full bg-primary p-4 font-bold text-on-primary transition-transform hover:-translate-y-0.5"
+						onclick={addStep}
+						type="button"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 -960 960 960">
+							<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+						</svg>
+						Ajouter Une Étape
+					</button>
 				{/if}
 			</div>
 		</section>
@@ -237,16 +264,16 @@
 		<section class="space-y-8">
 			<h2 class="font-serif text-3xl font-semibold text-on-surface">Statut</h2>
 			<div>
-				<p class="mb-2 block text-base font-medium text-on-surface">Statut de la recette</p>
 				<input bind:value={status} name="status" type="hidden">
 				<div class="grid grid-cols-2 gap-2 rounded-full bg-surface p-1 shadow-inner">
-					<button class="rounded-full p-3 font-bold transition-all" class:bg-primary={status === 'draft'}
-									class:text-on-primary={status === 'draft'}
-									onclick={() => status = 'draft'} type="button">Brouillon
+					<button
+						class="rounded-full p-3 font-bold transition-colors {status === 'draft' ? 'text-on-primary bg-primary' : 'hover:bg-primary/10'}"
+						onclick={() => status = 'draft'} type="button">Brouillon
 					</button>
-					<button class="rounded-full p-3 font-bold transition-all" class:bg-primary={status === 'published'}
-									class:text-on-primary={status === 'published'}
-									onclick={() => status = 'published'} type="button">Publié
+					<button
+						class="rounded-full p-3 font-bold transition-colors {status === 'published' ? 'text-on-primary bg-primary' : 'hover:bg-primary/10'}"
+						onclick={() => status = 'published'} type="button">
+						Publié
 					</button>
 				</div>
 			</div>

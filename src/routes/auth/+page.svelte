@@ -60,16 +60,24 @@
 			</form>
 
 		{:else}
-			<form method="POST" action="?/signup" use:enhance in:fade={{ duration: 200, delay: 100 }} class="space-y-6">
-				<TextInput name="email" type="email" label="Adresse e-mail" />
-				<TextInput name="username" type="text" label="Pseudonyme" />
+			<!--			<form method="POST" action="?/signup" use:enhance in:fade={{ duration: 200, delay: 100 }} class="space-y-6">-->
+			<!--				<TextInput name="email" type="email" label="Adresse e-mail" />-->
+			<!--				<TextInput name="username" type="text" label="Pseudonyme" />-->
 
-				<button
-					type="submit"
-					class="w-full rounded-full bg-primary py-4 text-xl font-bold text-on-primary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
-					Créer mon compte
-				</button>
-			</form>
+			<!--				<button-->
+			<!--					type="submit"-->
+			<!--					class="w-full rounded-full bg-primary py-4 text-xl font-bold text-on-primary shadow-lg transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">-->
+			<!--					Créer mon compte-->
+			<!--				</button>-->
+			<!--			</form>-->
+
+			<h3 class="font-bold my-6 text-xl text-center">Cette fonctionnalité est désactivée pour le moment.</h3>
+
+			<button
+				disabled
+				class="w-full rounded-full bg-gray-400 py-4 text-xl font-bold text-on-primary shadow-lg">
+				Créer mon compte
+			</button>
 		{/if}
 
 		{#if form && !isSubmitting}
