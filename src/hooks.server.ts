@@ -73,15 +73,22 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	event.locals.session = session;
 	event.locals.user = user;
 
-	console.log('test');
+	console.log('Session : ' + JSON.stringify(session) + '\n');
 
-	if (!event.locals.session && event.url.pathname.startsWith('/user')) {
+	const isLoggedIn = event.locals.session !== null;
+
+	if (!isLoggedIn && event.url.pathname.startsWith('/user')) {
 		redirect(303, '/auth');
 	}
 
-	if (event.locals.session && event.url.pathname === '/auth') {
+	if (isLoggedIn && event.url.pathname === '/auth') {
 		redirect(303, '/user');
 	}
+
+	// if /auth and connected, redirect to /user OK
+	// if /user and connected, do nothing OK
+	// if /auth and not connected, do nothing OK
+	// if /user and not connected, redirect to /auth OK
 
 	return resolve(event);
 };
