@@ -23,4 +23,5 @@
 	};
 </script>
 
-<RecipeEditor errorMessage={form?.message} errorsListMessages={form?.errorsListMessages} recipe={recipe}></RecipeEditor>
+<RecipeEditor editorMode="create" errorMessage={form?.message} errorsListMessages={form?.errorsListMessages}
+							recipe={recipe}></RecipeEditor>

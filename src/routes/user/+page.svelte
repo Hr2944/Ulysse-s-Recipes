@@ -77,7 +77,7 @@
 
 		<form action="?/logout" method="POST">
 			<button
-				class="rounded-full border-2 border-primary px-6 py-2.5 font-bold text-primary transition-all hover:bg-primary hover:text-on-primary hover:shadow-lg active:scale-95"
+				class="rounded-full border-2 border-primary px-6 py-2.5 font-bold text-primary transition-colors hover:bg-primary/10 active:scale-95"
 			>
 				Me déconnecter
 			</button>

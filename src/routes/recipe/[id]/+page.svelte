@@ -84,7 +84,6 @@
 			} else {
 				pattern += '(?:s|x)?';
 			}
-
 			return pattern;
 		});
 
@@ -102,33 +101,49 @@
 			'aux', 'au', 'à[\\s\\u00A0]+la', 'à'
 		];
 		const wordGroup = `(?:(?:${prefixes.join('|')})[\\s\\u00A0]+)?`;
+
 		const fullPrefix = `${wordGroup}${elisionGroup}`;
 
 		const boundary = `(^|[\\s\\u00A0${aposChars}"(\\[>,:;!?.\\-])`;
 
-		return new RegExp(`${boundary}(${fullPrefix}${corePattern})(?![\\w\u00C0-\u00FF])`, 'gi');
+		return new RegExp(`${boundary}(${fullPrefix})(${corePattern})(?![\\w\u00C0-\u00FF])`, 'gi');
 	}
 
 	function renderStepText(description: string): string {
 		let renderedText = description;
 
+		if (!sortedIngredients || sortedIngredients.length === 0) {
+			return description;
+		}
+
 		for (const ingredient of sortedIngredients) {
 			try {
 				const regex = createFuzzyRegex(ingredient.name);
 
-				renderedText = renderedText.replace(regex, (match, separator, text) => {
+				// UPDATED CALLBACK SIGNATURE:
+				// match: The full string matched
+				// separator ($1): Space, bracket, etc.
+				// prefix ($2): "le ", "l'", "d'"
+				// coreText ($3): "vin blanc", "ail"
+				renderedText = renderedText.replace(regex, (match, separator, prefix, coreText) => {
+
 					if (match.includes('text-primary')) return match;
 
 					const safeSeparator = separator || '';
+					const safePrefix = prefix || ''; // Ensure it's not undefined
+
 					const formattedQty = formatQuantity(ingredient.quantity);
 					const unit = ingredient.unit ? ` ${ingredient.unit}` : '';
 
-					return `${safeSeparator}<span class="font-bold text-primary">${text} (${formattedQty}${unit})</span>`;
+					// RECONSTRUCTION:
+					// Separator + Prefix + <Bold>Ingredient + Quantity</Bold>
+					return `${safeSeparator}${safePrefix}<span class="font-bold text-primary">${coreText} (${formattedQty}${unit})</span>`;
 				});
 			} catch (e) {
-				console.warn(`Error reg ${ingredient.name}`, e);
+				console.warn(`Could not create regex for ${ingredient.name}`, e);
 			}
 		}
+
 		return renderedText;
 	}
 

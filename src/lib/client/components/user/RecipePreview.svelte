@@ -56,7 +56,7 @@
 			class="mt-6 flex items-center border-t border-primary/10 text-sm font-medium text-on-surface/60">
 
 			<a
-				class="w-1/2 flex items-center justify-center gap-2 px-4 py-6 font-bold text-primary transition-colors hover:bg-primary/10 hover:text-primary-700"
+				class="border-r border-primary/10 w-1/2 flex items-center justify-center gap-2 px-4 py-6 font-bold text-primary transition-colors hover:bg-primary/10 hover:text-primary-700"
 				href={`/user/recipe/${recipe.id}/edit`}>
 				<svg fill="currentColor" height="20" viewBox="0 -960 960 960" width="20" xmlns="http://www.w3.org/2000/svg">
 					<path

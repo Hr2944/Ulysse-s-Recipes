@@ -9,6 +9,7 @@
 	import type { Database } from '$lib/types/supabase.types';
 
 	type Props = {
+		editorMode: 'create' | 'edit',
 		errorMessage: string | null | undefined;
 		errorsListMessages: string[] | null | undefined;
 		recipe: {
@@ -40,7 +41,7 @@
 		}
 	}
 
-	let { recipe, errorMessage, errorsListMessages }: Props = $props();
+	let { recipe, errorMessage, errorsListMessages, editorMode }: Props = $props();
 
 	let title = $state(recipe.title ?? '');
 	let description = $state(recipe.description ?? '');
@@ -95,9 +96,19 @@
     };
   }}>
 		<section>
-			<h1 class="font-serif text-4xl font-bold text-primary md:text-5xl">Modifier la recette</h1>
+			<h1 class="font-serif text-4xl font-bold text-primary md:text-5xl">
+				{#if editorMode === 'edit'}
+					Modifier la recette
+				{:else}
+					Créer une recette
+				{/if}
+			</h1>
 			<p class="mt-2 text-lg text-on-surface/80">
-				Apportez des modifications à votre recette et sauvegardez-les.
+				{#if editorMode === 'edit'}
+					Apportez des modifications à votre recette et sauvegardez-les.
+				{:else}
+					Créer et sauvegarder une nouvelle recette.
+				{/if}
 			</p>
 		</section>
 
@@ -294,7 +305,11 @@
 			<button
 				class="disabled:bg-on-surface/50 w-full rounded-full bg-primary py-4 text-xl font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-100"
 				disabled={isSubmitting} type="submit">
-				Enregistrer les modifications
+				{#if editorMode === 'edit'}
+					Enregistrer les modifications
+				{:else}
+					Enregistrer la recette
+				{/if}
 			</button>
 		</div>
 	</form>
