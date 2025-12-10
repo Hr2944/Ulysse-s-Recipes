@@ -1,10 +1,17 @@
 <script lang="ts">
 	import { fade, slide } from 'svelte/transition';
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import type { PageProps } from './$types';
 	import TextInput from '$lib/client/components/input/TextInput.svelte';
 
-	let { form }: PageProps = $props();
+	let { form, data }: PageProps = $props();
+
+	$effect(() => {
+		if (data.session) {
+			goto('/user');
+		}
+	});
 
 	let activeTab = $state<'connexion' | 'inscription'>('connexion');
 	let isSubmitting = $state(false);
