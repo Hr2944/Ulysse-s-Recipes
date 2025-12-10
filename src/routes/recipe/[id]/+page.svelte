@@ -5,7 +5,7 @@
 	import Checkbox from '$lib/client/components/input/Checkbox.svelte';
 
 	const { data } = $props<{ data: PageData }>();
-	const { recipe } = data;
+	const { recipe } = $derived(data);
 
 	let isIngredientsSheetOpen = $state(false);
 	let servings = $state(
