@@ -1,27 +1,14 @@
 <script lang="ts">
-	import RecipeEditor from '$lib/client/components/user/RecipeEditor.svelte';
-	import type { PageProps } from './$types';
+  import RecipeEditor from '$lib/client/user/RecipeEditor.svelte';
+  import type { PageProps } from './$types';
+	import { INITIAL_RECIPE } from './defaults';
 
-	let { form }: PageProps = $props();
-
-	const recipe = {
-		title: null,
-		type: null,
-		cook_time_minutes: null,
-		cost: null,
-		cover_image_url: null,
-		created_at: null,
-		description: null,
-		difficulty: null,
-		is_vegan: null,
-		is_vegetarian: null,
-		prep_time_minutes: null,
-		servings: null,
-		status: null,
-		ingredients: [],
-		steps: []
-	};
+  let { form }: PageProps = $props();
 </script>
 
-<RecipeEditor editorMode="create" errorMessage={form?.message} errorsListMessages={form?.errorsListMessages}
-							recipe={recipe}></RecipeEditor>
+<RecipeEditor
+  editorMode="create"
+  errorMessage={form?.message}
+  errorsListMessages={form?.errorsListMessages}
+  recipe={INITIAL_RECIPE}
+/>

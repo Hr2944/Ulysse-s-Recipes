@@ -49,8 +49,6 @@ const supabase: Handle = async ({ event, resolve }) => {
 			error
 		} = await event.locals.supabase.auth.getUser();
 		if (error) {
-			// JWT validation has failed
-			console.error('safeGetSession error:', error);
 			return { session: null, user: null };
 		}
 
@@ -73,8 +71,6 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	event.locals.session = session;
 	event.locals.user = user;
 
-	console.log('Session : ' + JSON.stringify(session) + '\n');
-
 	const isLoggedIn = event.locals.session !== null;
 
 	if (!isLoggedIn && event.url.pathname.startsWith('/user')) {
@@ -84,11 +80,6 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	if (isLoggedIn && event.url.pathname === '/auth') {
 		redirect(303, '/user');
 	}
-
-	// if /auth and connected, redirect to /user OK
-	// if /user and connected, do nothing OK
-	// if /auth and not connected, do nothing OK
-	// if /user and not connected, redirect to /auth OK
 
 	return resolve(event);
 };

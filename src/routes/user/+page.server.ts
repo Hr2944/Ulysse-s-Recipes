@@ -1,6 +1,6 @@
 import { type Actions, error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { FilterValues } from '$lib/client/components/filterControls.types';
+import type { FilterValues } from '$lib/client/filter-controls/filterControls.types';
 import { searchWithFilters } from '$lib/server/search';
 
 export const actions = {

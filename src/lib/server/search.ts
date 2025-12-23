@@ -1,4 +1,4 @@
-import type { FilterValues } from '$lib/client/components/filterControls.types';
+import type { FilterValues } from '$lib/client/filter-controls/filterControls.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/supabase.types';
 

@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import type { FilterValues } from '$lib/client/components/filterControls.types';
+import type { FilterValues } from '$lib/client/filter-controls/filterControls.types';
 import { searchWithFilters } from '$lib/server/search';
 import type { PageServerLoad } from './$types';
 

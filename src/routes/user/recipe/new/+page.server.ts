@@ -129,7 +129,6 @@ export const actions = {
 		});
 
 		if (dbError) {
-			console.log(dbError);
 			return fail(500, { message: "Erreur lors de l'enregistrement, veuillez réessayer." });
 		}
 
