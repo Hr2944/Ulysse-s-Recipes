@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { inputId } from '$lib/client/inputs/input-id';
+	import { check } from '$lib/assets/svg-paths';
 
 	let {
 		label,
@@ -31,7 +32,7 @@
     <svg
 			class="pointer-events-none absolute h-5 w-5 fill-white opacity-0 transition-opacity peer-checked:opacity-100"
 			viewBox="0 -960 960 960">
-      <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+      <path d={check} />
     </svg>
   </span>
 

@@ -198,7 +198,10 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user } 
 	recipe.cover_image_url =
 		recipe.cover_image_url === ''
 			? ''
-			: supabase.storage.from('recipe-images').getPublicUrl(recipe.cover_image_url).data.publicUrl;
+			: supabase.storage
+					.from('recipe-images')
+					.getPublicUrl(recipe.cover_image_url, { transform: { height: 300, width: 400 } }).data
+					.publicUrl;
 
 	return { recipe };
 };

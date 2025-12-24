@@ -12,7 +12,13 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 		recipes: data?.map((r) => {
 			return {
 				...r,
-				cover_image_url: r.cover_image_url === '' ? '' : supabase.storage.from('recipe-images').getPublicUrl(r.cover_image_url).data.publicUrl
+				cover_image_url:
+					r.cover_image_url === ''
+						? ''
+						: supabase.storage
+								.from('recipe-images')
+								.getPublicUrl(r.cover_image_url, { transform: { height: 300, width: 400 } }).data
+								.publicUrl
 			};
 		})
 	};

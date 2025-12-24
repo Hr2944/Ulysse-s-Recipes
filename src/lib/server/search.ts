@@ -90,7 +90,10 @@ async function _searchWithFilters(
 			cover_image_url:
 				r.cover_image_url === ''
 					? ''
-					: supabase.storage.from('recipe-images').getPublicUrl(r.cover_image_url).data.publicUrl
+					: supabase.storage
+							.from('recipe-images')
+							.getPublicUrl(r.cover_image_url, { transform: { height: 300, width: 400 } }).data
+							.publicUrl
 		};
 	});
 

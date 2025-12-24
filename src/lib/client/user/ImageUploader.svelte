@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { upload_file, upload_image } from '$lib/assets/svg-paths';
+
 	type Props = {
 		name: string;
 		initialPreviewUrl?: string | null;
@@ -48,7 +50,7 @@
 				class="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white opacity-0 transition-opacity hover:opacity-100">
 				<svg height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
 					<path
-						d="M440-200h80v-167l64 64 56-57-160-160-160 160 57 56 63-63v167ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520Z" />
+						d={upload_image} />
 				</svg>
 				<p class="mt-2 font-bold">Changer l'image</p>
 			</div>
@@ -57,7 +59,7 @@
 			<div class="flex flex-col items-center text-on-surface/70">
 				<svg class="h-12 w-12 fill-current opacity-50" viewBox="0 -960 960 960">
 					<path
-						d="M480-480ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h320v80H200v560h560v-320h80v320q0 33-23.5 56.5T760-120H200Zm40-160h480L570-480 450-320l-90-120-120 160Zm440-320v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z" />
+						d={upload_image} />
 				</svg>
 				<p class="mt-4 font-semibold">Cliquez ou glissez une image ici</p>
 				<p class="text-sm">PNG, JPG, WEBP jusqu'à 5 Mo</p>

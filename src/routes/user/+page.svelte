@@ -4,6 +4,7 @@
   import RecipePreview from '$lib/client/user/RecipePreview.svelte';
   import type { PageProps } from './$types';
   import { parseFilterParams, resetFilters, updateUrlWithFilters } from '$lib/client/filter-controls/filter-controls';
+  import { plus } from '$lib/assets/svg-paths';
 
   let { data }: PageProps = $props();
   let recipes = $derived(data.recipes);
@@ -44,7 +45,7 @@
     class="flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-bold text-on-primary shadow-lg transition-transform hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
     href="/user/recipe/new">
     <svg class="h-5 w-5 fill-current" viewBox="0 -960 960 960">
-     <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+     <path d={plus}/>
     </svg>
     Créer une recette
    </a>
@@ -60,7 +61,7 @@
    />
   </div>
 
-  {#if recipes?.length}
+  {#if recipes?.length > 0}
    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {#each recipes as recipe (recipe.id)}
      <RecipePreview {recipe} />
@@ -68,9 +69,9 @@
    </div>
   {:else}
    <div class="flex flex-col items-center justify-center py-16 text-center rounded-3xl bg-primary/5 border border-primary/10">
-    <svg class="h-20 w-20 fill-primary/30 mb-4" viewBox="0 -960 960 960">
-     <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0 0v-560 560Z" />
-    </svg>
+
+    <h2 class="text-on-surface/60 mb-12 font-bold text-9xl">¯\_(ツ)_/¯</h2>
+
     <p class="text-lg font-bold text-primary">Aucune recette trouvée</p>
     <p class="text-on-surface/60">Commencez par créer votre première recette !</p>
     <a href="/user/recipe/new" class="mt-4 text-sm font-bold text-primary underline hover:text-primary/80">

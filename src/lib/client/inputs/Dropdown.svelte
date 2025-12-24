@@ -1,5 +1,6 @@
 <script lang="ts">
   import { inputId } from '$lib/client/inputs/input-id';
+  import { arrow_down } from '$lib/assets/svg-paths';
 
   let {
     value = $bindable(),
@@ -36,7 +37,7 @@
 
   <div class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-on-surface/50 peer-focus:text-primary">
    <svg height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-    <path d="M480-360 280-560h400L480-360Z"/>
+    <path d={arrow_down}/>
    </svg>
   </div>
 </div>
