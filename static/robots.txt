@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /user/
+
+Sitemap: https://ulysse-s-recipes.vercel.app/sitemap.xml

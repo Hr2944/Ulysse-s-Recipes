@@ -5,18 +5,7 @@
 	import BottomNavigation from '$lib/client/bottom-navigation/BottomNavigation.svelte';
 	import '../app.css';
 
-	let { children, data } = $props();
-	// let { supabase, session } = $derived(data);
-	//
-	// onMount(() => {
-	//  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, _session) => {
-	//   if (_session?.expires_at !== session?.expires_at) {
-	//    invalidate('supabase:auth');
-	//   }
-	//  });
-	//
-	//  return () => subscription.unsubscribe();
-	// });
+	let { children } = $props();
 </script>
 
 <div class="min-h-screen bg-background font-sans flex flex-col">
