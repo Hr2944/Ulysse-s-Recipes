@@ -4,12 +4,25 @@
 	import MobileHeader from '$lib/client/header/MobileHeader.svelte';
 	import BottomNavigation from '$lib/client/bottom-navigation/BottomNavigation.svelte';
 	import '../app.css';
+	import LoadingBar from '$lib/client/loading-bar/LoadingBar.svelte';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
 
 	let { children } = $props();
+
+	let progressBar: ReturnType<typeof LoadingBar>;
+
+	beforeNavigate(() => {
+		progressBar?.start();
+	});
+
+	afterNavigate(() => {
+		progressBar?.done();
+	});
 </script>
 
-<div class="min-h-screen bg-background font-sans flex flex-col">
+<LoadingBar bind:this={progressBar} />
 
+<div class="min-h-screen bg-background font-sans flex flex-col">
 	<div class="hidden sm:block">
 		<Header />
 	</div>
