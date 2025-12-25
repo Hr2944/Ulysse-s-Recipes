@@ -3,6 +3,7 @@ import { cachedAsync } from '$lib/server/cache';
 
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 	const data = await cachedAsync('home-recipes-select', 43200, async () => {
+		const s = performance.now()
 		const { data } = await supabase
 			.from('recipes')
 			.select(
@@ -11,6 +12,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 			.eq('status', 'published')
 			.order('created_at', { ascending: false })
 			.limit(10);
+		console.log(performance.now() - s);
 		return data;
 	});
 

@@ -25,13 +25,13 @@ export function cached<T>(key: string, ttl: number, loadFn: () => T): T {
 export async function cachedAsync<T>(key: string, ttl: number, loadFn: () => Promise<T>): Promise<T> {
 	const now = Date.now();
 
-	if (cache.has(key)) {
-		const elapsed = now - cache.get(key)!.timestamp;
-
-		if (elapsed > ttl) {
-			return cache.get(key)!.data;
-		}
-	}
+	// if (cache.has(key)) {
+	// 	const elapsed = now - cache.get(key)!.timestamp;
+	//
+	// 	if (elapsed > ttl) {
+	// 		return cache.get(key)!.data;
+	// 	}
+	// }
 
 	const obj = await loadFn();
 	cache.set(key, { data: obj, timestamp: now });
