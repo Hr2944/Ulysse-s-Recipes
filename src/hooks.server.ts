@@ -75,21 +75,19 @@ const supabase: Handle = async ({ event, resolve }) => {
 const authGuard: Handle = async ({ event, resolve }) => {
 	if (event.url.pathname.startsWith('/user')) {
 		const { session, user } = await event.locals.safeGetSession();
+
+		if (!session) {
+			redirect(303, '/auth');
+		}
+
 		event.locals.session = session;
 		event.locals.user = user;
-	} else {
-		event.locals.session = null;
-		event.locals.user = null;
-	}
+	} else if (event.url.pathname === '/auth') {
+		const { session } = await event.locals.safeGetSession();
 
-	const isLoggedIn = event.locals.session !== null;
-
-	if (!isLoggedIn && event.url.pathname.startsWith('/user')) {
-		redirect(303, '/auth');
-	}
-
-	if (isLoggedIn && event.url.pathname === '/auth') {
-		redirect(303, '/user');
+		if (session) {
+			redirect(303, '/user');
+		}
 	}
 
 	return resolve(event);
