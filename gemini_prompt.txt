@@ -21,7 +21,7 @@ Contenu du site:
 	- L'évaluation moyenne de la recette par les visiteurs
 	- Un champ permettant aux utilisateurs (anonymes ou connecté) de noter la recette
 - Une page de création de recette, uniquement accessible aux utilisateurs connectés et avec les droits associés. Cette page permet de rentrer toutes les informations sur la recette pour la publier ensuite sur le site (tu peux inférer les informations nécéssaires depuis la page de présentation de la recette ci-dessus).
-- Une page de gestion des recettes, uniquement accessible aux utilisateurs connectés et avec les droits associés. Cette page permet à l'utilisateur de gérer les recettes qu'il a déjà publié (modification, suppression...) et d'en publier de nouvelles. La page doit être facilement navigable, avec un système de recherche, et les filtres et tris présents sur la page de recherche classique.
+- Une page de gestion des recettes, uniquement accessible aux utilisateurs connectés et avec les droits associés. Cette page permet à l'utilisateur de gérer les recettes qu'il a déjà publiées (modification, suppression...) et d'en publier de nouvelles. La page doit être facilement navigable, avec un système de recherche, et les filtres et tris présents sur la page de recherche classique.
 - Dans le header, un bouton amenant vers la page connexion
 - Une page de connexion permettant de se connecter ou de se créer un compte. Pour la création de compte, la seule information sur l'utilisateur nécessaire est une adresse mail, un mot de passe (potentiellement inutile si tu optes pour une connexion avec une lien magique, je te laisse décider selon ce qui te semble le mieux), et un pseudonyme qui apparaitra sur les recettes.
 - Une page sitemap.xml

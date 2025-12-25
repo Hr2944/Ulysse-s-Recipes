@@ -182,7 +182,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user } 
 	const { data: recipe, error: err } = await supabase
 		.from('recipes')
 		.select(
-			'*, ingredients ( id, name, quantity, unit, order ), steps ( id, step_number, description )'
+			'title, type, cook_time_minutes, cost, cover_image_url, description, difficulty, is_vegan, is_vegetarian, prep_time_minutes, servings, status, ingredients ( id, name, quantity, unit, order ), steps ( id, step_number, description )'
 		)
 		.eq('id', id)
 		.eq('author_id', user.id)

@@ -8,7 +8,6 @@
 	import ImageUploader from '$lib/client/user/ImageUploader.svelte';
 	import type { Database } from '$lib/types/supabase.types';
 	import { bin, plus } from '$lib/assets/svg-paths';
-	import * as path from 'node:path';
 
 	type RecipeData = {
 		title: string | null;
@@ -37,7 +36,7 @@
 	let { recipe, errorMessage, errorsListMessages, editorMode }: Props = $props();
 
 	// 1. Consolidated State: Initialize one reactive object from props
-	let form = $derived({
+	let form = $state({
 		title: recipe.title ?? '',
 		description: recipe.description ?? '',
 		prep_time_minutes: recipe.prep_time_minutes,
@@ -60,7 +59,6 @@
 
 	let isSubmitting = $state(false);
 
-	// Optimized Array Operations
 	const addIngredient = () => {
 		form.ingredients.push({
 			name: '',
@@ -210,7 +208,7 @@
 						type="button"
 					>
 						<svg class="h-5 w-5 fill-current" viewBox="0 -960 960 960">
-							<path d={path} />
+							<path d={plus} />
 						</svg>
 						Ajouter Un Ingrédient
 					</button>
@@ -295,7 +293,7 @@
 						onclick={() => form.status = 'published'}
 						type="button"
 					>
-						Publié
+						Publiée
 					</button>
 				</div>
 			</div>
@@ -307,7 +305,7 @@
 			{/if}
 			{#if errorsListMessages?.length}
 				<ul class="text-lg font-bold text-red-800 text-center mb-6 list-none">
-					{#each errorsListMessages as error}
+					{#each errorsListMessages as error (error)}
 						<li>{error}</li>
 					{/each}
 				</ul>

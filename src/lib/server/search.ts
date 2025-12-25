@@ -2,10 +2,11 @@ import type { FilterValues } from '$lib/client/filter-controls/filterControls.ty
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/supabase.types';
 
-async function _searchWithFilters(
+async function _searchWithFilters<Q extends string>(
 	supabase: SupabaseClient<Database>,
 	filters: FilterValues,
-	restrictToUserId: string | null
+	restrictToUserId: string | null,
+	selectFields: Q
 ) {
 	let query;
 
@@ -20,7 +21,7 @@ async function _searchWithFilters(
 			match_count: 10
 		});
 	} else {
-		query = supabase.from('recipes').select('*');
+		query = supabase.from('recipes').select(selectFields);
 	}
 
 	if (restrictToUserId) {
@@ -37,11 +38,15 @@ async function _searchWithFilters(
 		query = query.eq('status', filters.status);
 	}
 
-	if (filters.is_vegetarian) {
-		query = query.eq('is_vegetarian', true);
-	}
-	if (filters.is_vegan) {
-		query = query.eq('is_vegan', true);
+	if (filters.is_vegetarian && filters.is_vegan) {
+		query = query.or('is_vegetarian.eq.true,is_vegan.eq.true');
+	} else {
+		if (filters.is_vegetarian) {
+			query = query.eq('is_vegetarian', true);
+		}
+		if (filters.is_vegan) {
+			query = query.eq('is_vegan', true);
+		}
 	}
 
 	if (filters.total_time && filters.total_time !== 'all') {
@@ -106,11 +111,12 @@ async function _searchWithFilters(
 export async function searchWithFilters(
 	supabase: SupabaseClient<Database>,
 	filters: FilterValues,
+	selectFields: string,
 	restrictToUserId: string | null = null,
 	retries = 3
 ) {
 	for (let i = 1; i <= retries; i++) {
-		const queryResult = await _searchWithFilters(supabase, filters, restrictToUserId);
+		const queryResult = await _searchWithFilters(supabase, filters, restrictToUserId, selectFields);
 		if (!queryResult.error) return queryResult;
 	}
 

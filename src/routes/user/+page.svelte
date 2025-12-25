@@ -26,7 +26,7 @@
      Bonjour {data.username ?? ''}
     </h1>
     <p class="mt-2 text-lg text-on-surface/80">
-     Gérez vos recettes et votre profil.
+     Gérez vos recettes.
     </p>
    </div>
 

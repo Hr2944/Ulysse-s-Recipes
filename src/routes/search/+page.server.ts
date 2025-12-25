@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 		is_vegan: url.searchParams.get('is_vegan') === 'true'
 	};
 
-	const queryResult = await searchWithFilters(supabase, filters);
+	const queryResult = await searchWithFilters(supabase, filters, 'id, title, cover_image_url, difficulty, total_time_minutes, average_rating, is_vegetarian, is_vegan');
 
 	if (queryResult.error) {
 		error(500, 'Erreur lors du chargement des recettes, veuillez recharger la page.');

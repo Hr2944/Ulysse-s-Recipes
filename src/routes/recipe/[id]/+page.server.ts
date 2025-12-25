@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	const { data: recipe, error: err } = await supabase
 		.from('recipes')
 		.select(
-			'*, ingredients ( id, name, quantity, unit, order ), steps ( id, step_number, description )'
+			'title, cover_image_url, cost, difficulty, prep_time_minutes, cook_time_minutes, is_vegetarian, is_vegan, description, servings, ingredients ( id, name, quantity, unit, order ), steps ( id, step_number, description )'
 		)
 		.eq('id', id)
 		.single();

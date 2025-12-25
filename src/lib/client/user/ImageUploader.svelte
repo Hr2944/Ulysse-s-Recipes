@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { upload_file, upload_image } from '$lib/assets/svg-paths';
+	import { upload_image } from '$lib/assets/svg-paths';
 
 	type Props = {
 		name: string;
