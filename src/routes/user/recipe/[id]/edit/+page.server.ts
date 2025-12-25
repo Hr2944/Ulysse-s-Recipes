@@ -15,7 +15,6 @@ export const actions = {
 		if (!user) {
 			redirect(303, '/auth');
 		}
-		const userId = user.id;
 		const recipeId = params.id;
 
 		if (!recipeId) {
@@ -135,7 +134,10 @@ export const actions = {
 		const { data: embeddingData, error: embeddingError } = await supabase.functions.invoke(
 			'embed',
 			{
-				body: { input: validation.data.title }
+				body: {
+					input:
+						validation.data.title + ' ' + validation.data.ingredients?.map((i) => i.name).join(' ')
+				}
 			}
 		);
 
@@ -155,10 +157,8 @@ export const actions = {
 
 		const { ingredients, steps, ...recipeData } = validatedData;
 
-		// Use the 'update' RPC (preserved from 'edit' logic)
 		const { error: dbError } = await supabase.rpc('update_recipe_details', {
 			p_recipe_id: recipeId,
-			p_author_id: userId,
 			p_recipe_data: recipeData,
 			p_ingredients: ingredients ?? [],
 			p_steps: steps ?? []
@@ -172,7 +172,6 @@ export const actions = {
 	}
 } satisfies Actions;
 
-// --- Load Function (No changes needed) ---
 export const load: PageServerLoad = async ({ params, locals: { supabase, user } }) => {
 	if (!user) {
 		throw redirect(303, '/auth');

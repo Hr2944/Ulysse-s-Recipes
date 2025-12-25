@@ -17,7 +17,7 @@ async function _searchWithFilters<Q extends string>(
 
 		query = supabase.rpc('match_recipes', {
 			query_embedding: embedding['embedding'],
-			match_threshold: 0.78,
+			match_threshold: 0.8,
 			match_count: 10
 		});
 	} else {

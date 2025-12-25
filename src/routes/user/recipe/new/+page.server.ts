@@ -105,7 +105,10 @@ export const actions = {
 		const { data: embeddingData, error: embeddingError } = await supabase.functions.invoke(
 			'embed',
 			{
-				body: { input: validation.data.title }
+				body: {
+					input:
+						validation.data.title + ' ' + validation.data.ingredients?.map((i) => i.name).join(' ')
+				}
 			}
 		);
 

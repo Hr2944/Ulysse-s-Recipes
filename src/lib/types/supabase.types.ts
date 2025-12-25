@@ -20,7 +20,9 @@ export type Database = {
           name: string
           order: number | null
           quantity: number
+          recipe_author_id: string | null
           recipe_id: string
+          recipe_status: Database["public"]["Enums"]["recipe_status"] | null
           unit: string | null
         }
         Insert: {
@@ -28,7 +30,9 @@ export type Database = {
           name: string
           order?: number | null
           quantity: number
+          recipe_author_id?: string | null
           recipe_id: string
+          recipe_status?: Database["public"]["Enums"]["recipe_status"] | null
           unit?: string | null
         }
         Update: {
@@ -36,7 +40,9 @@ export type Database = {
           name?: string
           order?: number | null
           quantity?: number
+          recipe_author_id?: string | null
           recipe_id?: string
+          recipe_status?: Database["public"]["Enums"]["recipe_status"] | null
           unit?: string | null
         }
         Relationships: [
@@ -73,18 +79,21 @@ export type Database = {
           id: number
           rating: number
           recipe_id: string
+          user_id: string
         }
         Insert: {
           created_at?: string
           id?: number
           rating: number
           recipe_id: string
+          user_id?: string
         }
         Update: {
           created_at?: string
           id?: number
           rating?: number
           recipe_id?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -92,6 +101,13 @@ export type Database = {
             columns: ["recipe_id"]
             isOneToOne: false
             referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ratings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -111,6 +127,8 @@ export type Database = {
           is_vegan: boolean
           is_vegetarian: boolean
           prep_time_minutes: number
+          rating_count: number
+          rating_sum: number
           servings: number
           status: Database["public"]["Enums"]["recipe_status"]
           title: string
@@ -132,6 +150,8 @@ export type Database = {
           is_vegan?: boolean
           is_vegetarian?: boolean
           prep_time_minutes: number
+          rating_count?: number
+          rating_sum?: number
           servings?: number
           status?: Database["public"]["Enums"]["recipe_status"]
           title: string
@@ -153,6 +173,8 @@ export type Database = {
           is_vegan?: boolean
           is_vegetarian?: boolean
           prep_time_minutes?: number
+          rating_count?: number
+          rating_sum?: number
           servings?: number
           status?: Database["public"]["Enums"]["recipe_status"]
           title?: string
@@ -174,19 +196,25 @@ export type Database = {
         Row: {
           description: string
           id: number
+          recipe_author_id: string | null
           recipe_id: string
+          recipe_status: Database["public"]["Enums"]["recipe_status"] | null
           step_number: number
         }
         Insert: {
           description: string
           id?: number
+          recipe_author_id?: string | null
           recipe_id: string
+          recipe_status?: Database["public"]["Enums"]["recipe_status"] | null
           step_number: number
         }
         Update: {
           description?: string
           id?: number
+          recipe_author_id?: string | null
           recipe_id?: string
+          recipe_status?: Database["public"]["Enums"]["recipe_status"] | null
           step_number?: number
         }
         Relationships: [
@@ -233,6 +261,8 @@ export type Database = {
           is_vegan: boolean
           is_vegetarian: boolean
           prep_time_minutes: number
+          rating_count: number
+          rating_sum: number
           servings: number
           status: Database["public"]["Enums"]["recipe_status"]
           title: string
@@ -240,10 +270,15 @@ export type Database = {
           type: Database["public"]["Enums"]["recipe_type"]
           updated_at: string
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "recipes"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       update_recipe_details: {
         Args: {
-          p_author_id: string
           p_ingredients: Json
           p_recipe_data: Json
           p_recipe_id: string
