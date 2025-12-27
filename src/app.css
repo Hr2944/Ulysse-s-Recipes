@@ -7,9 +7,8 @@
     --color-on-surface: #1C1B1F;   /* Un gris très foncé, plus doux que le noir pur */
     --color-on-primary: #FFFFFF;   /* Texte sur fond Vert */
     --color-on-secondary: #FFFFFF; /* Texte sur fond Lilas */
-
-    --font-serif: "Playfair Display", serif;
-    --font-sans: "Lato", sans-serif;
+    --font-serif: "Playfair Display Variable", "Playfair Display Variable fallback", serif;
+    --font-sans: "Lato", "Lato fallback", sans-serif;
 }
 
 button {
