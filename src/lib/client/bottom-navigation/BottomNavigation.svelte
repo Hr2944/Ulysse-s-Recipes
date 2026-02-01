@@ -35,6 +35,6 @@
 <style>
     /* Keeps the navigation safe from the iOS home indicator */
     .pb-safe {
-        padding-bottom: env(safe-area-inset-bottom, 20px);
+        padding-bottom: env(safe-area-inset-bottom);
     }
 </style>
