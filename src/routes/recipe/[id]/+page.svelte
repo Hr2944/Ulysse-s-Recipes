@@ -5,10 +5,11 @@
 	import Checkbox from '$lib/client/inputs/Checkbox.svelte';
 	import { formatQuantity, renderStepText } from '$lib/client/utils/recipe-text';
 	import {
-		chef_hat,
+		chef_hat, close_fullscreen,
 		euro_symbol,
 		ingredients,
 		minus,
+		open_fullscreen,
 		oven,
 		plus,
 		timer,
@@ -28,6 +29,7 @@
 	);
 
 	let checkedSteps = $state(new Set<number>());
+	let isHeroImageFullscreen = $state(false);
 
 	// Derived calculations
 	const scalingFactor = $derived(servings / recipe.servings);
@@ -58,15 +60,42 @@
 		else newSet.add(num);
 		checkedSteps = newSet;
 	}
+
+	function toggleHeroImageFullscreen() {
+		isHeroImageFullscreen = !isHeroImageFullscreen;
+		document.body.classList.toggle('overflow-hidden', isHeroImageFullscreen);
+	}
 </script>
 
 <svelte:head>
 	<title>{recipe.title} - Ulysse's Recipes</title>
 </svelte:head>
 
+{#if isHeroImageFullscreen}
+	<div class="fixed flex items-center top-0 bottom-0 left-0 right-0 z-50 bg-red-600 ">
+		<img src={recipe.cover_image_url_full_size}
+				 alt={recipe.title}
+				 fetchpriority="low"
+				 loading="eager"
+				 class="w-full object-cover absolute z-60" />
+		<button aria-label="Passer l'image de présentation en plein écran"
+							class="absolute top-6 right-6 rounded-xl p-2 backdrop-blur-xs bg-primary/70 border border-primary shadow-lg"
+							onclick={toggleHeroImageFullscreen}>
+				<svg
+					class="h-6 w-6 fill-on-primary/60"
+					viewBox="0 -960 960 960"
+				>
+					<path stroke-linecap="round"
+								stroke-linejoin="round" d={close_fullscreen} />
+				</svg>
+			</button>
+	</div>
+{/if}
+
 <article class="relative min-h-screen bg-surface pb-20 sm:pb-0">
 
-	<header class="w-full bg-primary/10 overflow-hidden {recipe.cover_image_url ? 'h-[40vh] md:h-[60vh]' : 'hidden'}">
+	<header
+		class="sticky top-14 md:top-[84px] w-full bg-primary/10 overflow-hidden {recipe.cover_image_url ? 'h-[40vh] md:h-[80vh]' : 'hidden'}">
 		{#if recipe.cover_image_url}
 			<img
 				src={recipe.cover_image_url}
@@ -75,6 +104,17 @@
 				loading="eager"
 				class="h-full w-full object-cover"
 			/>
+			<button aria-label="Passer l'image de présentation en plein écran"
+							class="absolute top-6 right-6 rounded-xl p-2 backdrop-blur-xs bg-primary/70 border border-primary shadow-lg"
+							onclick={toggleHeroImageFullscreen}>
+				<svg
+					class="h-6 w-6 fill-on-primary/60"
+					viewBox="0 -960 960 960"
+				>
+					<path stroke-linecap="round"
+								stroke-linejoin="round" d={open_fullscreen} />
+				</svg>
+			</button>
 		{/if}
 	</header>
 
@@ -161,7 +201,7 @@
 		<section class="mt-12">
 			<h2 class="mb-8 font-serif text-3xl font-bold text-primary">Préparation</h2>
 			<ol class="relative border-l-2 border-primary/10 ml-3 md:ml-4 space-y-8">
-				{#each sortedSteps as step (step.id)}
+				{#each sortedSteps as step (step.step_number)}
 					<li class="relative pl-8 md:pl-12 duration-500">
 						<span
 							class="absolute -left-[0.55rem] top-6 h-4 w-4 rounded-full ring-4 ring-white transition-colors duration-300 {checkedSteps.has(step.step_number) ? 'bg-primary' : 'bg-gray-200'}"></span>
@@ -222,7 +262,7 @@
 				</div>
 
 				<ul class="grow space-y-3 p-6">
-					{#each sortedIngredients as ingredient (ingredient.id)}
+					{#each sortedIngredients as ingredient (ingredient.order)}
 						<li class="flex items-center justify-between p-4 rounded-2xl bg-surface border border-primary/5 shadow-sm">
 							<span class="font-semibold text-on-surface">{ingredient.name}</span>
 							<span class="font-bold text-primary bg-primary/5 px-3 py-1 rounded-full text-sm">
