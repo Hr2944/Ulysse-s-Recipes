@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 			? ''
 			: supabase.storage
 					.from('recipe-images')
-					.getPublicUrl(recipe.cover_image_url, { transform: { height: 600, width: 800 } }).data
+					.getPublicUrl(recipe.cover_image_url).data
 					.publicUrl;
 
 	const cover_image_url_full_size =
@@ -34,8 +34,6 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 					.from('recipe-images')
 					.getPublicUrl(recipe.cover_image_url).data
 					.publicUrl;
-
-	console.log({ ...recipe, cover_image_url, cover_image_url_full_size });
 
 	return { recipe: {...recipe, cover_image_url, cover_image_url_full_size} };
 };

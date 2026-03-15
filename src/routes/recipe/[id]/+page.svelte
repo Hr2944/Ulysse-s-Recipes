@@ -5,7 +5,8 @@
 	import Checkbox from '$lib/client/inputs/Checkbox.svelte';
 	import { formatQuantity, renderStepText } from '$lib/client/utils/recipe-text';
 	import {
-		chef_hat, close_fullscreen,
+		chef_hat,
+		close_fullscreen,
 		euro_symbol,
 		ingredients,
 		minus,
@@ -71,26 +72,26 @@
 	<title>{recipe.title} - Ulysse's Recipes</title>
 </svelte:head>
 
-<!--{#if isHeroImageFullscreen}-->
-<!--	<div class="fixed flex items-center top-0 bottom-0 left-0 right-0 z-50 bg-red-600 ">-->
-<!--		<img src={recipe.cover_image_url_full_size}-->
-<!--				 alt={recipe.title}-->
-<!--				 fetchpriority="low"-->
-<!--				 loading="eager"-->
-<!--				 class="w-full object-cover absolute z-60" />-->
-<!--		<button aria-label="Passer l'image de présentation en plein écran"-->
-<!--							class="absolute top-6 right-6 rounded-xl p-2 backdrop-blur-xs bg-primary/70 border border-primary shadow-lg"-->
-<!--							onclick={toggleHeroImageFullscreen}>-->
-<!--				<svg-->
-<!--					class="h-6 w-6 fill-on-primary/60"-->
-<!--					viewBox="0 -960 960 960"-->
-<!--				>-->
-<!--					<path stroke-linecap="round"-->
-<!--								stroke-linejoin="round" d={close_fullscreen} />-->
-<!--				</svg>-->
-<!--			</button>-->
-<!--	</div>-->
-<!--{/if}-->
+{#if isHeroImageFullscreen}
+	<div class="fixed flex items-center justify-center top-0 bottom-0 left-0 right-0 z-50 backdrop-blur-xl p-6">
+		<button aria-label="Réduire l'image de présentation"
+						class="z-70 absolute top-6 right-6 rounded-xl p-2 backdrop-blur-xs bg-primary shadow-lg"
+						onclick={toggleHeroImageFullscreen}>
+			<svg
+				class="h-6 w-6 fill-on-primary"
+				viewBox="0 -960 960 960"
+			>
+				<path stroke-linecap="round"
+							stroke-linejoin="round" d={close_fullscreen} />
+			</svg>
+		</button>
+		<img src={recipe.cover_image_url_full_size}
+				 alt={recipe.title}
+				 fetchpriority="low"
+				 loading="eager"
+				 class="h-full z-60 rounded-xl" />
+	</div>
+{/if}
 
 <article class="relative min-h-screen bg-surface pb-20 sm:pb-0">
 
@@ -105,10 +106,10 @@
 				class="h-full w-full object-cover"
 			/>
 			<button aria-label="Passer l'image de présentation en plein écran"
-							class="absolute top-6 right-6 rounded-xl p-2 backdrop-blur-xs bg-primary/70 border border-primary shadow-lg"
+							class="absolute top-6 right-6 rounded-xl p-2 bg-primary shadow-lg"
 							onclick={toggleHeroImageFullscreen}>
 				<svg
-					class="h-6 w-6 fill-on-primary/60"
+					class="h-6 w-6 fill-on-primary"
 					viewBox="0 -960 960 960"
 				>
 					<path stroke-linecap="round"

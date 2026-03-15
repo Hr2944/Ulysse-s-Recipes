@@ -26,3 +26,5 @@ vite.config.ts.timestamp-*
 # Special Scripts and Folders
 /supabase
 ./schema.sql
+TODO.md
+.gitignore
